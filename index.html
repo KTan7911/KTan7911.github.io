@@ -6,9 +6,24 @@
   <meta name="description" content="KTcove寻宝人 - 个人网站，分享宝藏资源、技术干货与生活思考">
   <title>KTcove寻宝人 | 宝藏小站</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/splash.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
 </head>
 <body>
+
+  <!-- 科幻启动页 -->
+  <div class="splash" id="splash" aria-label="点击进入网站">
+    <div class="splash-deep"></div>
+    <canvas id="splashCanvas"></canvas>
+    <div class="splash-grid"></div>
+    <div class="splash-content">
+      <div class="splash-status">SYSTEM ONLINE</div>
+      <h1 class="splash-title">KTCOVE</h1>
+      <div class="splash-sub">寻 宝 人 · 宝 藏 小 站</div>
+      <div class="splash-enter">▶ 点 击 进 入</div>
+    </div>
+    <div class="splash-hint">DRAG THE STARFIELD TO GATHER · CLICK TO ENTER</div>
+  </div>
 
   <!-- 导航栏 -->
   <header class="nav">
@@ -118,5 +133,6 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/splash.js"></script>
 </body>
 </html>
