@@ -42,11 +42,6 @@ npx serve .
 在本目录执行（需要先安装 [Git](https://git-scm.com/downloads)）：
 
 ```bash
-git init
-git add .
-git commit -m "我的个人网站"
-git branch -M main
-git remote add origin https://github.com/你的用户名/你的用户名.github.io.git
 git push -u origin main
 ```
 
@@ -100,7 +95,7 @@ git push -u origin main
 | A Record | `@` | `185.199.109.153` | Automatic |
 | A Record | `@` | `185.199.110.153` | Automatic |
 | A Record | `@` | `185.199.111.153` | Automatic |
-| CNAME Record | `www` | `你的用户名.github.io.` | Automatic |
+| CNAME Record | `www` | `KTan7911.github.io.` | Automatic |
 
 > 注意：
 > - Namecheap 的 `@` 填 **`@`**（或留空，代表根域名）
@@ -118,13 +113,13 @@ git push -u origin main
 ### 2. 在 GitHub 配置自定义域名
 
 1. 进入仓库 **Settings → Pages**
-2. **Custom domain** 填入 `www.你的域名.com`（或 `你的域名.com`）
+2. **Custom domain** 填入 `www.ktcove.com`（或 `ktcove.com`）
 3. 点击 **Save**，等待 GitHub 校验通过
 4. 勾选 **Enforce HTTPS**（证书自动签发，可能需等待几分钟到几小时）
 
 ### 3. 完成
 
-浏览器访问 `https://www.你的域名.com`，网站上线 🎉
+浏览器访问 `https://www.ktcove.com`，网站上线 🎉
 
 ## 常用域名注册商参考
 
