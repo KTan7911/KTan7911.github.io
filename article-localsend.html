@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="LocalSend：82K Star 的开源跨平台文件传输神器，无服务器、端到端加密，手机电脑互传从此不再折磨">
+  <title>LocalSend：跨设备传文件的开源神器 | KTcove寻宝人</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/article.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">KTcove 寻宝人</a>
+      <nav class="menu" id="menu">
+        <a href="index.html#about">关于我</a>
+        <a href="index.html#skills">技能</a>
+        <a href="index.html#projects">作品</a>
+        <a href="index.html#contact">联系</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" aria-label="打开菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 文章主体 -->
+  <article class="article">
+    <div class="container">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="article-tag">宝藏推荐</span>
+          <span class="article-date">2026-08-16</span>
+        </div>
+        <h1 class="article-title">LocalSend：跨设备传文件，从此告别数据线和压缩画质</h1>
+        <p class="article-sub">82K Star 的开源神器，无服务器、端到端加密，iPhone / 安卓 / Windows / Mac 全平台互传</p>
+      </header>
+
+      <div class="article-body">
+
+        <h2>📦 痛点：传个文件为什么这么难？</h2>
+        <p>手机拍的照片想发到电脑？方案基本是这些：</p>
+        <ul>
+          <li>💾 插数据线 —— 麻烦，还经常弹窗乱跳</li>
+          <li>📱 微信/QQ —— 会压缩画质、有大小限制，还污染聊天记录</li>
+          <li>☁️ 网盘 —— 要上传下载，慢，隐私还悬着</li>
+          <li>📤 AirDrop —— 好用，但只有苹果全家桶能用</li>
+        </ul>
+        <p>如果你家里恰好「iPhone + Windows」或者「安卓 + Mac」混搭，那 AirDrop 直接没戏。而 <strong>LocalSend</strong> 就是来终结这个问题的。</p>
+
+        <h2>✨ 它是什么？</h2>
+        <p><a href="https://github.com/localsend/localsend" target="_blank" rel="noopener">LocalSend</a> 是一个开源的跨平台文件传输工具，GitHub 上已经拿到 <strong>8.2 万 Star</strong>。核心理念一句话：<strong>像 AirDrop 一样传文件，但全平台通用、完全免费、无广告、无文件大小限制</strong>。</p>
+
+        <div class="article-feature-grid">
+          <div class="feature-item">
+            <div class="feature-icon">🌍</div>
+            <h4>全平台</h4>
+            <p>Windows / macOS / Linux / Android / iOS 全覆盖</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <h4>端到端加密</h4>
+            <p>文件不经过任何服务器，设备间点对点直传</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <h4>极速</h4>
+            <p>局域网内跑满 WiFi 带宽，视频照片原画质</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🆓</div>
+            <h4>免费无广告</h4>
+            <p>开源软件，无内购无弹窗无大小限制</p>
+          </div>
+        </div>
+
+        <h2>⚙️ 硬核在哪？聊聊它的技术原理</h2>
+        <p>LocalSend 看着简单，但背后是相当讲究的设计：</p>
+
+        <h3>1. 设备发现：广播协议</h3>
+        <p>打开 App 后，设备会通过局域网 <strong>UDP 广播</strong>自己的信息（昵称、设备类型、支持的协议版本），同时监听其他设备的广播。这样不用任何中央服务器，同一 WiFi/局域网下的设备就能互相发现——这就是「没有服务器」的奥秘。</p>
+
+        <h3>2. 传输安全：TLS 端到端加密</h3>
+        <p>两台设备建立连接后，通过 <strong>HTTPS + TLS 加密</strong>传输文件。更硬核的是，LocalSend 使用<strong>自签名证书 + 证书指纹校验</strong>：接收方会在界面上看到发送方的证书指纹，双方可以比对确认，从而防止中间人攻击——哪怕在公共 WiFi 下也安全。</p>
+
+        <h3>3. 协议开源：REST API</h3>
+        <p>LocalSend 把整套协议做成了开放的 <a href="https://github.com/localsend/protocol" target="_blank" rel="noopener">REST API 规范</a>，任何开发者都能基于它做自己的客户端或集成——这也解释了为什么它能覆盖这么多平台。</p>
+
+        <h2>🚀 怎么用？三分钟上手</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <p>下载安装：去官网 <a href="https://localsend.org" target="_blank" rel="noopener">localsend.org</a> 或各平台应用商店搜索 "LocalSend"（全平台都有）</p>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <p>连同一 WiFi：两台设备连接到<strong>同一个网络</strong>（局域网即可，无需联网）</p>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <p>发送：选择文件 → 选择目标设备 → 对方点击「接受」→ 传输完成 ✅</p>
+          </div>
+        </div>
+
+        <blockquote>
+          💡 小技巧：手机开热点给电脑连，或者两台设备连同一个路由器 WiFi，都可以互传。
+        </blockquote>
+
+        <h2>🤔 和常见方案对比</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>方案</th>
+              <th>跨平台</th>
+              <th>画质</th>
+              <th>速度</th>
+              <th>隐私</th>
+              <th>费用</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>LocalSend</strong></td>
+              <td>✅ 全平台</td>
+              <td>✅ 原画质</td>
+              <td>✅ 跑满带宽</td>
+              <td>✅ 点对点加密</td>
+              <td>免费</td>
+            </tr>
+            <tr>
+              <td>微信/QQ</td>
+              <td>✅</td>
+              <td>❌ 压缩</td>
+              <td>❌ 慢</td>
+              <td>❌ 过服务器</td>
+              <td>免费</td>
+            </tr>
+            <tr>
+              <td>AirDrop</td>
+              <td>❌ 仅苹果</td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>免费</td>
+            </tr>
+            <tr>
+              <td>网盘</td>
+              <td>✅</td>
+              <td>✅</td>
+              <td>❌ 慢</td>
+              <td>❌</td>
+              <td>付费提速</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>⚠️ 注意事项</h2>
+        <ul>
+          <li>需要在<strong>同一个局域网</strong>内（同一 WiFi / 路由器 / 热点），跨网络（异地）默认不支持</li>
+          <li>部分路由器开了「AP 隔离」会导致设备互相发现不了，关掉即可</li>
+          <li>虽然加密，但在公共 WiFi 传敏感文件仍建议谨慎</li>
+        </ul>
+
+        <h2>🎯 总结</h2>
+        <p>LocalSend 完美诠释了什么叫「小而美的开源硬核」：<strong>一个协议、一套开源代码、覆盖全平台</strong>，把传文件这件小事做到极致。如果你受够了数据线和微信压缩画质，它值得成为你设备里的常驻工具。</p>
+        <p>👉 项目地址：<a href="https://github.com/localsend/localsend" target="_blank" rel="noopener">github.com/localsend/localsend</a>（8.2 万 Star）</p>
+        <p>👉 官网下载：<a href="https://localsend.org" target="_blank" rel="noopener">localsend.org</a></p>
+
+      </div>
+
+      <footer class="article-footer">
+        <a href="index.html" class="btn btn-primary">← 返回首页</a>
+        <a href="index.html#projects" class="btn btn-outline">更多宝藏</a>
+      </footer>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> KTcove寻宝人 · 用 ❤️ 制作</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
