@@ -219,6 +219,15 @@
   flex-wrap: wrap;
 }
 
+/* 阅读量 */
+.article-views {
+  max-width: 720px;
+  margin: 28px auto 0;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
 @media (max-width: 640px) {
   .article {
     padding: 40px 0 56px;

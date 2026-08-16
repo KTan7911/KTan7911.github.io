@@ -273,6 +273,12 @@ a {
   font-size: 14px;
 }
 
+.footer-stats {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
 /* ---------- 移动端适配 ---------- */
 @media (max-width: 640px) {
   .menu {
