@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 基础 SEO -->
+  <title>n8n：搭一个不睡觉的数字管家——天气、待办、追剧、股票全自动送到手机 | KTcove寻宝人</title>
+  <meta name="description" content="n8n 可视化自动化平台生活化教程：从「每日播报」到待办提醒、追剧更新、股票盯盘、淘宝降价监控，零代码搭建，微信推送。附抢票的正确姿势与新手 3 步上手。">
+  <meta name="keywords" content="n8n,自动化,数字管家,待办提醒,每日播报,工作流,开源,追剧更新,股票提醒,降价监控">
+  <meta name="author" content="KTcove寻宝人">
+  <meta name="robots" content="index, follow">
+
+  <!-- 规范链接 -->
+  <link rel="canonical" href="https://www.ktcove.com/article-n8n.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="KTcove寻宝人 | 宝藏小站">
+  <meta property="og:title" content="n8n：搭一个不睡觉的数字管家——天气、待办、追剧、股票全自动送到手机">
+  <meta property="og:description" content="零代码搭建自动化管家：每日播报、待办提醒、追剧更新、股票盯盘、降价监控，全自动推送到微信。">
+  <meta property="og:url" content="https://www.ktcove.com/article-n8n.html">
+  <meta property="og:locale" content="zh_CN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="n8n：搭一个不睡觉的数字管家">
+  <meta name="twitter:description" content="零代码搭建自动化管家：每日播报、待办提醒、追剧更新、股票盯盘、降价监控。">
+
+  <!-- 结构化数据：Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "n8n：搭一个不睡觉的数字管家——天气、待办、追剧、股票全自动送到手机",
+    "description": "n8n 可视化自动化平台生活化教程：每日播报、待办提醒、追剧更新、股票盯盘、降价监控，零代码搭建，微信推送。",
+    "author": {
+      "@type": "Person",
+      "name": "KTcove寻宝人",
+      "url": "https://www.ktcove.com/"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "KTcove寻宝人"
+    },
+    "datePublished": "2026-08-16",
+    "mainEntityOfPage": "https://www.ktcove.com/article-n8n.html"
+  }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/article.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👋</text></svg>">
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">KTcove 寻宝人</a>
+      <nav class="menu" id="menu">
+        <a href="index.html#about">关于我</a>
+        <a href="index.html#skills">技能</a>
+        <a href="index.html#treasures">宝藏</a>
+        <a href="index.html#projects">作品</a>
+        <a href="index.html#contact">联系</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" aria-label="打开菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 文章主体 -->
+  <article class="article">
+    <div class="container">
+      <header class="article-header">
+        <div class="article-meta">
+          <span class="article-tag">宝藏推荐</span>
+          <span class="article-date">2026-08-16</span>
+        </div>
+        <h1 class="article-title">n8n：搭一个不睡觉的数字管家</h1>
+        <p class="article-sub">天气、待办、追剧、股票、降价……全自动送到你手机里，零代码，今晚就能搭好</p>
+      </header>
+
+      <div class="article-body">
+
+        <h2>🌅 先讲个你熟悉的早晨</h2>
+        <p>闹钟响了，你躺在床上刷手机：看天气、翻日历、划新闻、点开视频 App 看剧更没更新……<strong>每天重复一遍，烦不烦？</strong></p>
+        <p>今天推荐的 <a href="https://github.com/n8n-io/n8n" target="_blank" rel="noopener">n8n</a>（GitHub 10 万+ Star 的开源自动化平台），能把这些全包了——它就是一个<b>不睡觉的数字管家</b>：替你看、替你盯、替你记，然后一条微信告诉你结果。</p>
+
+        <h2>🤖 管家第一课：每日播报</h2>
+        <p>用 n8n 搭一条工作流，每天早晨 7 点，自动往你微信推一条消息：</p>
+
+        <div class="article-tip">
+<pre>
+📅 8月16日 星期三
+━━━━━━━━━━━━━
+🌤 今天：晴 26~33℃ 适合出门
+📌 今日待办：
+   · 14:00 牙医预约
+   · 20:00 追剧《XX》更新
+📰 今日热闻：×××
+━━━━━━━━━━━━━
+💡 提醒：该交房租了！
+</pre>
+        </div>
+
+        <p>这条消息背后的工作流长这样——<strong>全程拖拽，没有一行代码</strong>：</p>
+
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <p>⏰ <strong>定时器</strong>：每天早 7 点触发</p>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <p>🌤 <strong>查天气</strong>：调用免费天气接口，拿今天的气温 / 降水</p>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <p>📋 <strong>读待办</strong>：读取你今天要做的安排（下面细讲）</p>
+          </div>
+          <div class="step">
+            <span class="step-num">4</span>
+            <p>📰 <strong>拉新闻</strong>：抓几条今日热点标题</p>
+          </div>
+          <div class="step">
+            <span class="step-num">5</span>
+            <p>🧠 <strong>AI 汇总</strong>：让 AI 把上面内容整理成上面那条清爽的播报</p>
+          </div>
+          <div class="step">
+            <span class="step-num">6</span>
+            <p>📱 <strong>推送到微信</strong>：通过 Server酱 / 企业微信机器人发到你手机</p>
+          </div>
+        </div>
+
+        <p>搭完点 <strong>Activate（启动）</strong>，明早 7 点准时收到——这就是"管家"的第一份工作。</p>
+
+        <h2>📝 管家第二课：待办提醒（核心！）</h2>
+        <p>很多人问：<strong>"明天的安排，n8n 怎么知道？能读我的备忘录吗？"</strong></p>
+        <p>答案是：<strong>不用读备忘录</strong>（苹果备忘录、微信收藏都没有开放接口，n8n 读不了），而是让管家给你一个<b>输入口</b>——你随手一句话，它记下来，明早提醒你。</p>
+
+        <h3>怎么记？给管家"发条消息"就行</h3>
+        <p>n8n 的 <strong>Webhook 节点</strong>能生成一个专属入口，配合 Telegram / 微信 / 飞书机器人，用法超自然：</p>
+
+        <div class="article-tip">
+<pre>
+你在手机上：                      n8n 管家那边：
+─────────────────────────        ─────────────────────
+给机器人发：                     Webhook 收到 →
+"明天下午3点牙医"                 AI 解析出「时间 + 事项」→
+                                 存进待办清单 →
+                                 回复你"已记录 ✅" →
+                                 明早播报时读出来提醒
+</pre>
+        </div>
+
+        <ul>
+          <li><strong>Telegram 机器人</strong>（最顺滑）：发一句话，自动解析、自动存、自动回你"已记录 ✅"</li>
+          <li><strong>网页表单</strong>（最简单）：n8n 生成一个表单链接存到手机桌面，点开填「事项 + 时间」提交</li>
+          <li><strong>微信 / 飞书机器人</strong>（国内用户友好）：同样发消息即记录</li>
+        </ul>
+
+        <p><strong>核心逻辑：记录成本约等于 0，提醒永不遗漏。</strong>随手一句「明天 3 点牙医」，剩下的全交给管家——这才是"数字管家"的灵魂。</p>
+
+        <h2>🚀 管家进阶：三个生活化场景</h2>
+
+        <div class="article-feature-grid">
+          <div class="feature-item">
+            <div class="feature-icon">📺</div>
+            <h4>追剧更新</h4>
+            <p>难度：⭐ 最简单<br>盯剧集更新，更新了推给你</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📈</div>
+            <h4>股票盯盘</h4>
+            <p>难度：⭐⭐ 简单<br>自选股涨跌/破位推送提醒</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🛒</div>
+            <h4>降价监控</h4>
+            <p>难度：⭐⭐⭐ 进阶<br>商品降价自动提醒</p>
+          </div>
+        </div>
+
+        <h3>📺 追剧更新：别错过每一集</h3>
+        <p>把"查天气"节点换成<strong>剧集的 RSS 或更新接口</strong>，定时检查，有新一集就推送：</p>
+        <div class="article-tip">
+<pre>
+⏰ 每 30 分钟
+   ↓
+📡 检查剧集更新源
+   ↓
+🆕 有新集？→ 推微信："《XX》第8集更新啦，快去看！"
+</pre>
+        </div>
+
+        <h3>📈 股票盯盘：替你盯着，破位就喊你</h3>
+        <p>用<strong>免费股票 API</strong>（Alpha Vantage、新浪/腾讯行情接口）定时查价，涨跌超过阈值就推送。n8n 官方模板库就有现成的股票监控工作流。不用整天刷行情软件，跌到你的心理价位它会主动告诉你。</p>
+
+        <h3>🛒 淘宝降价：能监控，但有个大实话</h3>
+        <p>原理：n8n 定时抓商品页价格 → AI 提取价格 → 和上次记录对比 → 降价了推送。<strong>n8n 官方模板也有电商价格监控可参考。</strong></p>
+        <p>⚠️ <strong>坦白讲</strong>：淘宝没有公开的价格 API，这个玩法要走"网页抓取"路线，属于进阶课；而且电商平台对频繁抓取有限制。建议：① 降低频率（一天查 2~3 次）② 或借助第三方比价服务（如慢慢买）的接口配合推送。<strong>先玩转前两个，这个当彩蛋挑战。</strong></p>
+
+        <h2>⚠️ 有人问：能用 n8n 自动抢票吗？</h2>
+        <p>技术上"能"，但<strong>我劝你别</strong>。自动抢票（12306 / 演唱会票务）≈ 跟平台风控对赌：</p>
+        <ul>
+          <li>❌ 验证码是第一道墙：滑块、图片验证码，n8n 不会做</li>
+          <li>❌ 风控识别：毫秒级重复请求会被判定为脚本，<strong>轻则验证码连环，重则封号</strong>（12306 已大量拦截异常出票）</li>
+          <li>❌ 规则风险：第三方抢票平台已被官方约谈</li>
+        </ul>
+        <p><strong>正确玩法：让 n8n 当"盯梢员"</strong>——定时查余票，有票/开票了立刻推给你，你本人出手买。快人一步，又不踩红线。</p>
+
+        <h2>🛠 新手 3 步上手</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <p><strong>装 n8n</strong>：官网 <a href="https://n8n.cloud" target="_blank" rel="noopener">n8n.cloud</a> 注册免费账号，或自托管（Docker 一条命令）</p>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <p><strong>导入模板</strong>：打开 Workflows → Templates，搜 "Daily Digest / 每日播报"，一键导入现成模板</p>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <p><strong>填空启动</strong>：填城市、填微信推送密钥（Server酱免费注册），点 Activate，明早收播报</p>
+          </div>
+        </div>
+
+        <blockquote>
+          💡 搭会"每日播报"这一条，其他都是"换零件"：查天气换成查股价、查剧集、查商品价，思路完全一样。
+        </blockquote>
+
+        <h2>🎯 总结</h2>
+        <p>n8n 不是给程序员用的黑科技，而是<strong>给你用的自动管家</strong>——把每天重复看的、记的、盯的事，交给一个 7×24 小时不睡觉的机器人，然后一条微信告诉你结果。开源免费，零代码入门，今晚就能搭好第一个管家。</p>
+        <p>👉 项目地址：<a href="https://github.com/n8n-io/n8n" target="_blank" rel="noopener">github.com/n8n-io/n8n</a>（10 万+ Star）</p>
+        <p>👉 官方平台：<a href="https://n8n.cloud" target="_blank" rel="noopener">n8n.cloud</a></p>
+
+      </div>
+
+      <footer class="article-footer">
+        <a href="index.html" class="btn btn-primary">← 返回首页</a>
+        <a href="article-localsend.html" class="btn btn-outline">上一篇：LocalSend</a>
+      </footer>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© <span id="year"></span> KTcove寻宝人 · 用 ❤️ 制作</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
