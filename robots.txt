@@ -1,0 +1,8 @@
+# 搜索引擎爬虫规则
+# 允许所有搜索引擎抓取本站
+
+User-agent: *
+Allow: /
+
+# 站点地图位置
+Sitemap: https://www.ktcove.com/sitemap.xml
