@@ -128,3 +128,79 @@ git push -u origin main
 - **阿里云 / 腾讯云**：支付宝/微信支付方便，.com 首年促销约 55~85 元，需身份证实名认证（1~2 天审核），续费约 85 元/年
 - **Cloudflare Registrar**：成本价约 $10.4/年，续费不涨价，但**不支持支付宝**，需外币信用卡或虚拟卡
 - 便宜后缀（.top/.xyz/.site 等）首年可能很低，但**续费贵**，购买前务必查看续费价格
+
+---
+
+# 📝 发布新文章指南（SEO 版）
+
+每次发布新文章，按下面 4 步走，搜索引擎会自动收录。
+
+## 第 1 步：复制文章模板
+
+1. 复制 `article-localsend.html`，重命名为新文章（如 `article-xxx.html`）
+2. 修改以下**必须改**的部分：
+
+| 位置 | 改成什么 |
+|---|---|
+| `<title>` | 新文章标题（含关键词，如「XXX：开源神器深度评测」） |
+| `<meta name="description">` | 一句话描述文章，含 2~3 个关键词 |
+| `<meta name="keywords">` | 3~5 个相关关键词，逗号分隔 |
+| `<link rel="canonical">` | `https://www.ktcove.com/article-xxx.html` |
+| `og:url` / `twitter:*` | 同上，改成新页面地址 |
+| `JSON-LD` 里的 `headline` / `description` / `datePublished` | 新文章的标题、描述、日期 |
+| `<article>` 正文 | 替换成新内容 |
+
+> ⚠️ **JSON-LD 的 `datePublished`** 记得改成当天的日期（格式 `YYYY-MM-DD`）。
+
+## 第 2 步：首页加卡片
+
+在 `index.html` 的「宝藏推荐」区块（`id="treasures"`）里，复制一张现有卡片：
+
+```html
+<a class="card project-card" href="article-xxx.html">
+  <div class="card-icon">📡</div>
+  <h3>文章标题</h3>
+  <p>一句话简介（含关键词）</p>
+  <span class="card-link">阅读全文 →</span>
+</a>
+```
+
+## 第 3 步：更新 sitemap.xml
+
+在 `sitemap.xml` 的 `<urlset>` 里加一条（`lastmod` 填当天）：
+
+```xml
+<url>
+  <loc>https://www.ktcove.com/article-xxx.html</loc>
+  <lastmod>2026-08-16</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.8</priority>
+</url>
+```
+
+## 第 4 步：推送上线
+
+```powershell
+cd D:\DS_Harnees\MyWeb
+git add -A
+git commit -m "新增文章：文章标题"
+# 推送需要 GitHub 令牌（Contents: Read and write 权限，用完即删）
+git push https://KTan7911:<令牌>@github.com/KTan7911/KTan7911.github.io.git main
+```
+
+推送后等 1~2 分钟，访问 `https://www.ktcove.com/article-xxx.html` 验证。
+
+## 发布后（可选，加速收录）
+
+- **Google**：[Search Console](https://search.google.com/search-console) → 顶部 URL 检查 → 输入新页面地址 → 「请求编制索引」
+- **百度**：百度平台 → 普通收录 → 链接提交（有配额时手动提交；无配额则等蜘蛛自然抓取）
+- 在公众号文章里附上网站链接，也能加速收录
+
+## 日常维护备忘
+
+| 事项 | 说明 |
+|---|---|
+| 域名续费 | Dynadot 每年续费一次，建议开启自动续费 |
+| 令牌安全 | GitHub 令牌用完即删，别长期保留 |
+| 账号安全 | Dynadot / GitHub 建议开启双重验证（2FA） |
+| 桌面敏感截图 | 含账号密码的截图建议删除或加密保存 |
