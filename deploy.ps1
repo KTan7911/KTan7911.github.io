@@ -36,6 +36,10 @@ if ($staged) {
 }
 
 Write-Host ""
+Write-Host "同步远程（Actions 自动提交可能让本地落后，先拉取合并）..." -ForegroundColor Cyan
+git pull --rebase origin main -X ours 2>&1 | Out-Host
+
+Write-Host ""
 Write-Host "正在推送（GCM 认证：首次会弹出浏览器授权窗口，请点击授权）..." -ForegroundColor Yellow
 git push origin main
 if ($LASTEXITCODE -ne 0) {
