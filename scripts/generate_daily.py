@@ -38,11 +38,20 @@ WHITELIST = ["爱范儿","少数派","虎嗅APP","量子位","机器之心","IT�
   "手机中国","太平洋电脑网","中关村在线","微软科技"]
 BLACK_KW = ["暴雨","预警","涨停","跌停","地震","台风","洪水","天气","股市","油价",
   "通报","纪委","中奖","彩票","征婚","养生","谜案","车祸","火灾","招聘","辟谣","停水","停电",
-  "外交","军事","战争","导弹","制裁","宏观","政策解读","经济数据","GDP"]
-BOOST_KW = ["免费","省钱","避坑","技巧","教程","设置","隐私","安全","诈骗","手机","电脑",
+  "外交","军事","战争","导弹","制裁","宏观","政策解读","经济数据","GDP",
+  "逝世","悼念","讣告","追思","缅怀","暖心","正能量","感动","致敬","表彰","慰问","座谈",
+  "印发","通知公告","学习贯彻","领导调研","参观考察","峰会论坛","白皮书"]
+LIFE_KW = ["免费","省钱","避坑","技巧","教程","设置","隐私","安全","诈骗","手机","电脑",
   "软件","App","充电","电池","屏幕","网速","会员","订阅","家电","冰箱","空调","洗衣机",
   "电视","摄像头","路由器","耳机","键盘","鼠标","健康","视力","睡眠","儿童","老人","家庭",
-  "宠物","厨房","清洁","收纳","出行","旅行","学习","办公","学生","打工人"]
+  "宠物","厨房","清洁","收纳","出行","旅行","学习","办公","学生","打工人",
+  "清理","加速","下载","备份","找回","删除","恢复","提醒","清单","攻略","测评","实测"]
+FAR_KW = ["光刻机","大模型","芯片","财报","季度","融资","IPO","股价","市值","发布会",
+  "行业报告","专利","巨头","格局","战略","生态","资本","投融资","供应链","量产","制程",
+  "纳米","架构师","开发者","半导体","新能源车","销量","同比","增长","破纪录","估值",
+  "白皮书","峰会","论坛","人工智能大会","产业联盟","出海","全球化"]
+LIFE_ACCOUNTS = ["什么值得买","果壳","雷科技","电手","黑马公社","手机中国","好物研究院",
+  "家电研究所","丁香生活研究所","太平洋电脑网","中关村在线"]
 TAG_COLORS = {"省💰":"#eab308","避坑⚠️":"#ef4444","提效⚡":"#22c55e","隐私🔒":"#3b82f6","健康❤️":"#ec4899","科普📖":"#94a3b8"}
 
 def http_json(url, method="GET", params=None, data=None, headers=None, timeout=30):
@@ -76,13 +85,24 @@ def fetch_hot(token):
                   data={"category": CATEGORY, "read_num": 10000})
     return r.get("data", {}).get("items", []), r.get("balance")
 
+def life_score(item):
+    """生活化评分：命中生活词 +2/个，命中高大上词 -3/个，生活类账号 +2。"""
+    t = item.get("title", "")
+    s = 0
+    for kw in LIFE_KW:
+        if kw in t: s += 2
+    for kw in FAR_KW:
+        if kw in t: s -= 3
+    if item.get("nickname", "") in LIFE_ACCOUNTS: s += 2
+    return s
+
 def keep(item):
-    nick, title = item.get("nickname", ""), item.get("title", "")
-    if nick in WHITELIST: return True
+    title = item.get("title", "")
     if any(k in title for k in BLACK_KW): return False
-    boost = sum(1 for k in BOOST_KW if k.lower() in title.lower())
-    if boost >= 1: return True
-    return item.get("read_num", 0) >= 30000
+    s = life_score(item)
+    if s >= 2: return True                     # 明显生活向
+    if item.get("nickname", "") in WHITELIST and s >= 0: return True  # 科技媒体且不扣分
+    return item.get("nickname", "") in LIFE_ACCOUNTS
 
 def dedupe(items):
     seen, out = {}, []
@@ -213,12 +233,12 @@ def compute_hot_words(items, notes):
     text = " ".join(it.get("title", "") for it in items)
     text += " " + " ".join(n.get("summary", "") + n.get("why", "") for n in notes)
     counts = {}
-    for kw in BOOST_KW:
+    for kw in LIFE_KW:
         c = text.lower().count(kw.lower())
         if c:
             counts[kw] = c
     top = [k for k, _ in sorted(counts.items(), key=lambda x: -x[1])][:5]
-    return top or ["免费", "省钱", "避坑", "AI", "手机"]
+    return top or ["省钱", "避坑", "免费", "手机", "电池"]
 
 def update_data_json(daily_dir, date_str, items, notes, rel):
     """维护 daily/data.json：按日期归档所有文章，供归档页搜索使用。"""
@@ -371,11 +391,14 @@ def main():
         print(f"[warn] 今天匹配 {len(items)} 条，回退使用最近数据（共 {len(all_items)} 条）")
         items = all_items
     items = [it for it in items if keep(it)]
+    if len(items) < 5:
+        print(f"[warn] 生活化过滤后仅 {len(items)} 条，放宽为按阅读量取（剔除黑名单词后）")
+        items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
-    items.sort(key=lambda x: x.get("read_num", 0), reverse=True)
+    items.sort(key=lambda x: (life_score(x), x.get("read_num", 0)), reverse=True)
     items = items[:TOP_N]
     if len(items) < 5:
-        print(f"[warn] 过滤后有效文章仅 {len(items)} 条，检查过滤规则")
+        print(f"[warn] 有效文章仅 {len(items)} 条，检查过滤规则")
     notes = summarize(items)
     if len(notes) != len(items):
         notes = [{"title": it["title"], "summary": "", "why": "", "tag": "科普📖"} for it in items]
