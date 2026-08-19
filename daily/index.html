@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>历史日报归档与搜索 - KTcove 生活科技日报</title>
+<meta name="description" content="KTcove 生活科技日报历史归档：搜索框 + 今日热词标签，按关键词或日期查找往期科技生活信息。">
+<style>
+  body{margin:0;background:#0f172a;color:#e2e8f0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+  .wrap{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+  header{text-align:center;padding:28px 0 8px}
+  header h1{margin:0;font-size:22px}
+  header p{color:#94a3b8;font-size:13px;margin:6px 0 0}
+  .searchbox{display:block;width:100%;box-sizing:border-box;padding:12px 16px;border-radius:10px;border:1px solid #334155;background:#1e293b;color:#e2e8f0;font-size:15px;margin-top:18px}
+  .searchbox:focus{outline:none;border-color:#60a5fa}
+  .chips{margin:12px 0 4px;text-align:center}
+  .chip{background:#1e293b;color:#60a5fa;border:1px solid #334155;border-radius:999px;padding:6px 14px;margin:4px;font-size:13px;cursor:pointer}
+  .chip:hover,.chip.active{background:#60a5fa;color:#0f172a}
+  .hint{color:#64748b;font-size:12px;text-align:center;margin:14px 0 4px}
+  .day{display:block;background:#1e293b;border-radius:10px;padding:12px 16px;margin:10px 0;color:#60a5fa;text-decoration:none}
+  .day:hover{background:#334155}
+  .res{background:#1e293b;border-radius:10px;padding:12px 16px;margin:10px 0}
+  .res a{color:#60a5fa;text-decoration:none;font-weight:600;font-size:15px}
+  .res .meta{color:#94a3b8;font-size:12px;margin-top:4px}
+  .res .tagc{font-size:12px;font-weight:700}
+  .none{text-align:center;color:#64748b;padding:30px 0}
+  footer{text-align:center;color:#64748b;font-size:12px;margin-top:22px}
+  a.back{color:#94a3b8;font-size:13px;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📚 历史日报归档</h1>
+    <p>共 1 期 · 搜索或点热词，快速找到往期内容</p>
+  </header>
+  <input class="searchbox" id="q" type="search" placeholder="🔍 搜索历史日报，如：电池、免费、隐私…">
+  <div class="chips" id="chips"><button class="chip" data-kw="避坑">避坑</button><button class="chip" data-kw="省钱">省钱</button><button class="chip" data-kw="手机">手机</button></div>
+  <p class="hint" id="hint">▼ 按日期浏览</p>
+  <div id="days"><a class="day" href="2026-08-19.html">2026-08-19 日报 →</a></div>
+  <div id="results" style="display:none"></div>
+  <footer><a class="back" href="https://www.ktcove.com/">← 返回首页</a></footer>
+</div>
+<script>
+const TAG_COLOR = {"省💰":"#eab308","避坑⚠️":"#ef4444","提效⚡":"#22c55e","隐私🔒":"#3b82f6","健康❤️":"#ec4899","科普📖":"#94a3b8"};
+let ALL = [];
+fetch('data.json').then(r => r.json()).then(store => {
+  for (const [d, arr] of Object.entries(store)) ALL = ALL.concat(arr);
+  ALL.sort((a, b) => b.date.localeCompare(a.date));
+}).catch(() => {});
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function render(list) {
+  const box = document.getElementById('results');
+  if (!list.length) { box.style.display='block'; box.innerHTML='<p class="none">没有找到相关内容，换个词试试～</p>'; return; }
+  box.innerHTML = list.map(e => {
+    const c = TAG_COLOR[e.tag] || '#94a3b8';
+    return '<div class="res"><a href="' + esc(e.url) + '">' + esc(e.title) + '</a>' +
+      '<div class="meta">📅 ' + esc(e.date) + ' · 📰 ' + esc(e.nickname) + ' · <span class="tagc" style="color:' + c + '">' + esc(e.tag) + '</span></div>' +
+      '<div class="meta">' + esc(e.summary || '') + '</div></div>';
+  }).join('');
+  box.style.display = 'block';
+}
+function doSearch() {
+  const kw = document.getElementById('q').value.trim().toLowerCase();
+  const days = document.getElementById('days');
+  const hint = document.getElementById('hint');
+  if (!kw) { days.style.display='block'; hint.style.display='block'; document.getElementById('results').style.display='none'; return; }
+  const list = ALL.filter(e => (e.title + e.summary + e.why + e.tag + e.nickname).toLowerCase().includes(kw));
+  days.style.display = 'none'; hint.style.display = 'none';
+  render(list);
+}
+document.getElementById('q').addEventListener('input', doSearch);
+document.querySelectorAll('.chip').forEach(ch => ch.addEventListener('click', () => {
+  document.getElementById('q').value = ch.dataset.kw;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  ch.classList.add('active');
+  doSearch();
+}));
+</script>
+</body>
+</html>

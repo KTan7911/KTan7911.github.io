@@ -1,0 +1,39 @@
+name: Daily Hot News
+
+on:
+  schedule:
+    - cron: '40 9 * * *'   # 每天 17:40 北京时间（UTC+8，即 09:40 UTC）
+  workflow_dispatch: {}    # 支持手动触发
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Generate daily report
+        env:
+          CIMI_HOST: https://www.cimidata.com/
+          CIMI_APP_ID: ${{ secrets.CIMI_APP_ID }}
+          CIMI_APP_SECRET: ${{ secrets.CIMI_APP_SECRET }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          SITE_DIR: ${{ github.workspace }}
+        run: python scripts/generate_daily.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "每日生活科技日报 $(date +%F)"
+          git push

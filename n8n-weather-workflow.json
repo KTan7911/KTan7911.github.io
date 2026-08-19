@@ -1,0 +1,110 @@
+{
+  "name": "每日天气播报 → 微信推送",
+  "id": "b7f8c9d0-2222-4bbb-9ccc-111111111111",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-8bbb-000000000001",
+      "name": "定时器-每天早8点",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://wttr.in/深圳?format=j1",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-8bbb-000000000002",
+      "name": "查询天气",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-150, 0]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "id": "f1e2d3c4-0000-4aaa-8bbb-000000000001",
+              "name": "msg",
+              "type": "stringValue",
+              "stringValue": "=今日天气：{{ $json.current_condition[0].weatherDesc[0].value }}，气温 {{ $json.current_condition[0].temp_C }}°C，体感 {{ $json.current_condition[0].FeelsLikeC }}°C，湿度 {{ $json.current_condition[0].humidity }}%，风速 {{ $json.current_condition[0].windspeedKmph }}km/h"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-1111-4aaa-8bbb-000000000003",
+      "name": "整理天气消息",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [100, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sctapi.ftqq.com/你的SendKey.send",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"今日天气播报\",\n  \"desp\": \"{{ $json.msg }}\"\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-1111-4aaa-8bbb-000000000004",
+      "name": "推送到微信(Server酱)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [350, 0]
+    }
+  ],
+  "connections": {
+    "定时器-每天早8点": {
+      "main": [
+        [
+          {
+            "node": "查询天气",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "查询天气": {
+      "main": [
+        [
+          {
+            "node": "整理天气消息",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "整理天气消息": {
+      "main": [
+        [
+          {
+            "node": "推送到微信(Server酱)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

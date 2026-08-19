@@ -1,0 +1,13 @@
+# 依赖与缓存（禁止推送）
+node_modules/
+.npm-cache/
+.n8n/
+__pycache__/
+*.pyc
+
+# 本地环境与密钥
+.env
+*.local
+
+# 预览临时文件（如有）
+preview-archive/
