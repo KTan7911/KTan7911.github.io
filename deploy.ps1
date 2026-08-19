@@ -31,15 +31,16 @@ git add -A
 $staged = git diff --cached --name-only
 if ($staged) {
     git commit -m "每日生活科技日报 自动部署 $today"
-    Write-Host ""
-    $token = Read-Host "请输入 GitHub 令牌（粘贴后回车；令牌只在本命令中使用）"
-    git push "https://KTan7911:${token}@github.com/KTan7911/KTan7911.github.io.git" main
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "❌ 推送失败，请检查令牌是否有效（重新生成：GitHub -> Settings -> Developer settings -> Tokens）" -ForegroundColor Red
-        exit 1
-    }
 } else {
     Write-Host "没有新文件需要提交（内容已是最新）"
+}
+
+Write-Host ""
+$token = Read-Host "请输入 GitHub 令牌（粘贴后回车；令牌只在本命令中使用）"
+git push "https://KTan7911:${token}@github.com/KTan7911/KTan7911.github.io.git" main
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ 推送失败，请检查令牌是否有效，以及是否勾选了 repo + workflow 两个权限" -ForegroundColor Red
+    exit 1
 }
 
 Write-Host ""
