@@ -614,103 +614,173 @@
  "2026-09-10": [
   {
    "date": "2026-09-10",
-   "title": "苹果折叠屏让人更怀念乔布斯了",
+   "title": "洗衣机洗内裤袜子，到底省了多少水电和争吵",
    "nickname": "百度",
-   "summary": "苹果折叠屏新机被吐槽没新意，大家开始怀念乔布斯时代的创新。",
-   "why": "对你的用处：想换手机的先别急，看看真实评价再决定，免得花冤枉钱。",
-   "tag": "避坑⚠️",
+   "direction": "省钱",
+   "pain": "手洗内衣裤费时费水，还常因谁洗谁晾引发家庭矛盾。",
+   "angle": "从水电消耗、洗涤剂用量、时间成本三个维度算一笔账，对比手洗与机洗的实际差异；同时说明哪些材质和情况下确实不适合机洗，给出可操作的分类建议。",
+   "keywords": [
+    "洗衣机",
+    "内衣清洗",
+    "水电成本",
+    "家务分工"
+   ],
+   "review": "真正有用的是把'能不能机洗'变成'怎么洗更划算'，但前提是你家洗衣机得定期清洁，否则省下的水费可能不够买药。",
    "url": "https://www.ktcove.com/daily/2026-09-10.html",
    "article_url": "https://www.baidu.com/s?wd=%E8%8B%B9%E6%9E%9C%E6%8A%98%E5%8F%A0%E5%B1%8F%E8%AE%A9%E4%BA%BA%E6%9B%B4%E6%80%80%E5%BF%B5%E4%B9%94%E5%B8%83%E6%96%AF%E4%BA%86"
   },
   {
    "date": "2026-09-10",
-   "title": "建议大家把内裤袜子丢洗衣机洗",
-   "nickname": "微博",
-   "summary": "专家说机洗比手洗更干净，前提是加消毒液、别和外套混洗。",
-   "why": "对你的用处：省下手洗时间，还能洗得更干净，但记得分开洗、加消毒液。",
-   "tag": "提效⚡",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://s.weibo.com/weibo?q=%E5%BB%BA%E8%AE%AE%E5%A4%A7%E5%AE%B6%E6%8A%8A%E5%86%85%E8%A3%A4%E8%A2%9C%E5%AD%90%E4%B8%A2%E6%B4%97%E8%A1%A3%E6%9C%BA%E6%B4%97&t=31&band_rank=4&Refer=top"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "如何看待高考数学 132 分的学生在西电数学开学考只考 12 分，33 分竟位列前 6%？大学入学考是在考察什么？",
-   "nickname": "知乎",
-   "summary": "高考高分生大学开学考却考砸，说明大学考试难度和考法跟高中有很大不同。",
-   "why": "对你的用处：家里有刚上大学的，提醒他别吃老本，开学考砸不代表不行，早点适应就好。",
-   "tag": "科普📖",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.zhihu.com/question/2080949653168550211"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "我本来想给你买手机的",
-   "nickname": "抖音",
-   "summary": "抖音热门段子，用“本来想给你买手机”表达嘴上大方实际不花钱。",
-   "why": "对你的用处：当个乐子看就行，别当真，也别被人用这种话忽悠。",
-   "tag": "科普📖",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.douyin.com/hot/2643529"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "王者万象棋新手攻略",
-   "nickname": "抖音",
-   "summary": "王者荣耀自走棋玩法的新手入门教学，教你怎么上手不挨打。",
-   "why": "对你的用处：想玩又怕坑队友的，看一遍能少走弯路，省时间少生气。",
-   "tag": "提效⚡",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.douyin.com/hot/2643222"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "一个视频看懂苹果发布会亮点",
-   "nickname": "抖音",
-   "summary": "几分钟看完苹果发布会所有新东西，不用自己熬夜看完整场。",
-   "why": "对你的用处：省时间，几分钟就知道新机值不值得买，不用被广告忽悠。",
-   "tag": "提效⚡",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.douyin.com/hot/2642991"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "手机进入奢侈品时代",
+   "title": "手机进入奢侈品时代，你的换机周期该拉长了",
    "nickname": "百度",
-   "summary": "手机越卖越贵，顶配动辄上万，普通人换机压力越来越大。",
-   "why": "对你的用处：换手机前先想清楚需求，别为用不上的功能多花几千块。",
-   "tag": "省💰",
+   "direction": "省钱",
+   "pain": "旗舰手机价格不断攀升，换机成本越来越高，但多数人并不需要每年追新。",
+   "angle": "从折叠屏、影像旗舰的溢价逻辑讲起，分析哪些升级对普通人是伪需求；给出延长现有手机使用寿命的具体方法，以及什么时间点买上一代旗舰最划算。",
+   "keywords": [
+    "手机涨价",
+    "换机周期",
+    "旗舰机",
+    "消费降级"
+   ],
+   "review": "帮你认清'新机焦虑'里有多少是厂商营销，但如果你手机电池已经一天三充，该换还是得换。",
    "url": "https://www.ktcove.com/daily/2026-09-10.html",
    "article_url": "https://www.baidu.com/s?wd=%E6%89%8B%E6%9C%BA%E8%BF%9B%E5%85%A5%E5%A5%A2%E4%BE%88%E5%93%81%E6%97%B6%E4%BB%A3"
   },
   {
    "date": "2026-09-10",
-   "title": "老款iPhone成“理财产品”了吗",
-   "nickname": "头条",
-   "summary": "部分老款iPhone二手价不降反涨，有人当理财买。",
-   "why": "对你的用处：家里有闲置旧iPhone的先别扔，查查二手价，可能能卖个好价钱。",
-   "tag": "省💰",
+   "title": "8月新能源车零售下降，现在买车是抄底还是接盘",
+   "nickname": "抖音",
+   "direction": "省钱",
+   "pain": "新能源车销量波动、价格战持续，消费者搞不清现在入手是否划算。",
+   "angle": "从8月零售数据出发，分析销量下降背后的原因：补贴退坡、观望情绪、新车型周期；给出判断买车时机的几个实用指标，如库存周期、改款节点、电池成本趋势。",
+   "keywords": [
+    "新能源车",
+    "购车时机",
+    "价格战",
+    "销量数据"
+   ],
+   "review": "帮你把'再等等'和'该出手'之间的纠结拆成几个可判断的信号，但车市变化快，没人能替你拍板。",
    "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.toutiao.com/trending/7683875623583878702/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%2213%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227683875623583878702%22%2C%22hot_board_impr_id%22%3A%2220260911041242B01787A8071317799237%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E8%80%81%E6%AC%BEiPhone%E6%88%90%E2%80%9C%E7%90%86%E8%B4%A2%E4%BA%A7%E5%93%81%E2%80%9D%E4%BA%86%E5%90%97%22%7D&rank=&style_id=40132&topic_id=7683875623583878702"
+   "article_url": "https://www.douyin.com/hot/2642991"
   },
   {
    "date": "2026-09-10",
-   "title": "手机折痕 柔性电子",
+   "title": "上海28元馄饨只有两颗，景区定价套路怎么破",
+   "nickname": "微博",
+   "direction": "避坑",
+   "pain": "景区和热门商圈餐饮价格虚高，分量与价格严重不符，游客只能吃哑巴亏。",
+   "angle": "梳理景区餐饮定价的常见套路：菜单不标分量、时价菜、套餐捆绑；给出点单前问清计量单位、拍照留证、善用点评平台比价等具体避坑动作。",
+   "keywords": [
+    "景区餐饮",
+    "价格陷阱",
+    "消费者维权",
+    "点单技巧"
+   ],
+   "review": "不是教你吵架，而是让你在掏钱前多问一句，可惜多数人饿到失去理智时才想起看这篇。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://s.weibo.com/weibo?q=%E5%BB%BA%E8%AE%AE%E5%A4%A7%E5%AE%B6%E6%8A%8A%E5%86%85%E8%A3%A4%E8%A2%9C%E5%AD%90%E4%B8%A2%E6%B4%97%E8%A1%A3%E6%9C%BA%E6%B4%97&t=31&band_rank=4&Refer=top"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "苹果折叠屏传闻又起，先别急着怀念乔布斯",
+   "nickname": "头条",
+   "direction": "避坑",
+   "pain": "每次苹果发布会前后传闻满天飞，消费者容易被爆料和情怀叙事带偏，做出冲动购买决策。",
+   "angle": "梳理折叠屏传闻的常见来源和可信度分级，分析苹果产品节奏与爆料规律；提醒读者区分'爆料'与'发布'，给出理性评估新品的几个问题清单。",
+   "keywords": [
+    "苹果折叠屏",
+    "发布会",
+    "爆料可信度",
+    "理性消费"
+   ],
+   "review": "不是泼冷水，而是让你在'乔布斯如果还在'的感慨里少花点冤枉钱，毕竟他还在的话也不一定做折叠屏。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://www.toutiao.com/trending/7683847391716147236/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%226%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227683847391716147236%22%2C%22hot_board_impr_id%22%3A%22202609110433028991997B13D3859D6E19%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E8%80%81%E5%B8%88%E6%8A%8A4.8%E4%B8%87%E5%A5%96%E9%87%91%E5%B9%B3%E5%88%86%E7%BB%99400%E5%A4%9A%E5%90%8D%E5%AD%A6%E7%94%9F%22%7D&rank=&style_id=40132&topic_id=7683847391716147236"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "高考数学132分大学考12分，入学考在考什么",
+   "nickname": "知乎",
+   "direction": "提效",
+   "pain": "大学入学考成绩与高考分数严重脱节，新生容易陷入自我怀疑或盲目焦虑。",
+   "angle": "分析大学入学考与高考的考察差异：知识范围、题型逻辑、评分标准；说明这类考试的真实目的多为分班或摸底，而非选拔；给出利用入学考结果调整学习策略的方法。",
+   "keywords": [
+    "大学入学考",
+    "成绩落差",
+    "学习方法",
+    "分班考试"
+   ],
+   "review": "帮你看清一次考试说明不了什么，但如果你因此彻底躺平，那它确实说明了点什么。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://www.zhihu.com/question/2080949653168550211"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "老师4.8万奖金平分给学生，这事跟你有啥关系",
+   "nickname": "抖音",
+   "direction": "提效",
+   "pain": "看到这类新闻只觉得感动或羡慕，很少想到背后涉及的个人所得税和分配机制问题。",
+   "angle": "从奖金分配切入，讲清楚偶然所得、劳务报酬的税务处理差异，以及集体分配时常见的操作误区；延伸到普通人遇到类似集体奖金、红包分配时该怎么处理。",
+   "keywords": [
+    "奖金分配",
+    "个人所得税",
+    "偶然所得",
+    "财务常识"
+   ],
+   "review": "把一个暖心新闻拆成了税务常识课，角度有点冷，但下次你分到集体奖金时可能会感谢这篇。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://www.douyin.com/hot/2643222"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "健康AI用户1.5亿，你的症状描述正在训练谁",
+   "nickname": "抖音",
+   "direction": "护隐私",
+   "pain": "健康类AI应用收集大量用户症状、用药和体检数据，隐私条款通常无人细读。",
+   "angle": "以蚂蚁阿福新增健康板块为切入点，说明健康AI收集的数据类型、可能的使用场景、用户协议中的授权范围；给出使用这类工具时保护隐私的实用建议，如不绑定真实身份、不传原始报告。",
+   "keywords": [
+    "健康AI",
+    "医疗数据",
+    "隐私保护",
+    "用户协议"
+   ],
+   "review": "不是让你别用AI问诊，而是提醒你描述症状时少说两句个人史，省下的可能是未来的保险拒赔理由。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://www.douyin.com/hot/2643529"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "Apple Watch变成AI硬件，你的健康数据交给了谁",
+   "nickname": "爱范儿",
+   "direction": "护隐私",
+   "pain": "智能手表持续采集心率、睡眠、运动甚至心电图数据，多数人没想过这些数据流向哪里。",
+   "angle": "以Apple Watch新增AI功能为引子，梳理智能穿戴设备收集的健康数据类型、默认同步范围、第三方App读取权限；给出关闭非必要共享、定期检查权限的具体步骤。",
+   "keywords": [
+    "Apple Watch",
+    "健康数据",
+    "隐私权限",
+    "智能穿戴"
+   ],
+   "review": "不是劝你别用，而是让你知道手表比你自己更了解你的身体，这份了解不该默认共享给所有人。",
+   "url": "https://www.ktcove.com/daily/2026-09-10.html",
+   "article_url": "https://mp.weixin.qq.com/s?__biz=MjgzMTAwODI0MA==&mid=2652465890&idx=1&sn=9197ab443609e047411ef0a6ba627e25&chksm=9afe1611480c77d04144eed35776f55519a31649991e9974afc30048aa18f9b78bd1d74c64fa&scene=0&xtrack=1#rd"
+  },
+  {
+   "date": "2026-09-10",
+   "title": "美国对华降税清单将公布，海淘和代购会便宜吗",
    "nickname": "百度",
-   "summary": "折叠屏手机用久了屏幕中间会有折痕，这是柔性屏的通病。",
-   "why": "对你的用处：想买折叠屏的先知道折痕躲不掉，介意的话就别花这个钱。",
-   "tag": "避坑⚠️",
+   "direction": "省钱",
+   "pain": "关税调整消息频繁，但普通人搞不清哪些商品会降价、什么时候降、降多少。",
+   "angle": "解释关税调整传导到终端价格的链条和时滞，说明哪些品类可能受益、哪些环节会截留降价空间；给出关注官方清单、比价工具、替代渠道的具体方法。",
+   "keywords": [
+    "关税调整",
+    "海淘",
+    "代购",
+    "进口商品"
+   ],
+   "review": "帮你理解关税降了不等于你买的东西就便宜，中间还有汇率、渠道、品牌定价三道手，别急着清空购物车。",
    "url": "https://www.ktcove.com/daily/2026-09-10.html",
    "article_url": "https://www.baidu.com/s?wd=%E6%89%8B%E6%9C%BA%E6%8A%98%E7%97%95+%E6%9F%94%E6%80%A7%E7%94%B5%E5%AD%90"
-  },
-  {
-   "date": "2026-09-10",
-   "title": "8 月新能源车零售 100.5 万辆，同比下降 10.1%，燃油车零售 54 万辆，同比下降 40%，如何解读？",
-   "nickname": "知乎",
-   "summary": "8月新能源车和燃油车销量都在跌，买车的人整体变少了。",
-   "why": "对你的用处：想买车的可以再等等，销量跌了，后面优惠可能更大。",
-   "tag": "省💰",
-   "url": "https://www.ktcove.com/daily/2026-09-10.html",
-   "article_url": "https://www.zhihu.com/question/2080685915270295959"
   }
  ]
 }

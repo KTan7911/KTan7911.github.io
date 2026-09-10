@@ -222,32 +222,104 @@ def dedupe(items):
         uniq.append(it)
     return uniq
 
+# ---- 四大方向（主页板块宗旨：省钱/避坑/提效/护隐私）----
+DIRECTIONS = ["省钱", "避坑", "提效", "护隐私"]
+DIR_ICON = {"省钱": "省💰", "避坑": "避坑⚠️", "提效": "提效⚡", "护隐私": "隐私🔒"}
+DIR_COLOR = {"省钱": "#eab308", "避坑": "#ef4444", "提效": "#22c55e", "护隐私": "#3b82f6"}
+# 各方向目标条数（尽量 3+3+2+2）
+DIR_QUOTA = {"省钱": 3, "避坑": 3, "提效": 2, "护隐私": 2}
+# 各方向关键词（用于预筛 + 排序）
+DIR_KW = {
+    "省钱": ["省钱", "免费", "降价", "减价", "优惠", "折扣", "平替", "便宜", "性价比", "囤", "券", "会员", "续费", "扣费", "薅", "消费降级", "价格", "涨", "涨了", "块钱", "元"],
+    "避坑": ["避坑", "陷阱", "套路", "智商税", "维权", "退钱", "退款", "骗局", "诈骗", "虚假", "坑", "上当", "投诉", "12315", "黑幕", "翻车", "踩雷", "被宰"],
+    "提效": ["提效", "效率", "AI", "工具", "自动化", "技巧", "教程", "攻略", "快捷", "模板", "办公", "效率提升", "一键", "插件", "App", "软件", "提示词", "省时", "减负", "时间管理"],
+    "护隐私": ["隐私", "权限", "信息泄露", "数据安全", "防骗", "追踪", "定位", "麦克风", "摄像头", "个人信息", "合规", "新规", "实名", "人脸", "验证码", "账号", "加密"],
+}
+
 def summarize(items):
+    """用 DeepSeek 将条目改写为生活优化 10 条日报（四方向，每条 6 字段）。
+
+    输出字段：title(标题)/direction(方向)/pain(核心痛点)/angle(文章切入点)/keywords(关键词)/review(深度评价)。
+    保留原始 it，便于渲染时取来源/链接。
+    """
     if not DS_KEY:
-        return [{"title": it["title"], "summary": "", "why": "", "tag": "科普📖"} for it in items]
-    lines = "\n".join(f"{i+1}. {it['title']}（{it.get('nickname','')}，阅读 {it.get('read_num',0)}）"
-                      for i, it in enumerate(items))
-    prompt = ("你是生活科技编辑，读者是普通消费者（学生、打工人、家里长辈）。下面是一些来自微信热文、微博/知乎/百度/抖音热搜的条目。"
-              "从中挑选并对每条写三样："
-              "1)summary：一句话人话概括（40字内，别用术语）；2)why：对普通人的实际用处——能不能省钱、避坑、"
-              "省时间、保护隐私或健康？用大白话写（50字内），开头直接说\"对你的用处：\"；"
-              "3)tag：从 省💰/避坑⚠️/提效⚡/隐私🔒/健康❤️/科普📖 中选最贴切的一个。"
-              "严格按JSON数组输出，不要其他文字："
-              '[{"title":"原标题","summary":"...","why":"...","tag":"省💰"}]\n\n'
-              f"新闻列表：\n{lines}")
+        return [{"title": it["title"], "direction": "提效", "pain": "", "angle": "",
+                 "keywords": [], "review": ""} for it in items]
+    lines = "\n".join(
+        f"{i+1}. [{it.get('_channel') or it.get('nickname','')}] {it['title']}"
+        for i, it in enumerate(items))
+    prompt = (
+        "你是一名专注\"现代人生活优化\"的内容主编，请为下面每条热点内容写一份日报条目。四个方向："
+        "1省钱（消费降级/平替/薅羊毛/隐性支出/自动续费）2避坑（消费陷阱/合同套路/智商税/维权/新型骗局）"
+        "3提效（AI工具/办公技巧/时间管理/自动化/信息减负）4护隐私（数据安全/App权限/防诈骗/个人信息保护/监管新规）。"
+        "对每条输出 6 个字段：\n"
+        "1)title：标题（15-25字，带钩子，不夸大）；\n"
+        "2)direction：从 省钱/避坑/提效/护隐私 中选最贴切的一个；\n"
+        "3)pain：核心痛点（1句话）；\n"
+        "4)angle：文章切入点（2-3句，说清讲什么、怎么讲）；\n"
+        "5)keywords：关键词标签（3-5个，字符串数组）；\n"
+        "6)review：深度评价（30字左右）——点出这篇文章\"真正解决了什么\"而非复述标题，可有一点反差或提醒，"
+        "像朋友推荐不像广告文案；允许指出局限性；禁止夸大（不用震惊/必看/史上最全/彻底/绝对），"
+        "禁止编造数据、案例、专家名、机构名。\n"
+        "严格按 JSON 数组输出，不要其他文字："
+        '[{"title":"...","direction":"省钱","pain":"...","angle":"...","keywords":["..."],"review":"..."}]\n'
+        "注意：四个方向尽量均衡，优先覆盖 省钱/避坑/提效/护隐私 各至少 2 条。\n\n"
+        f"候选内容：\n{lines}")
     r = http_json("https://api.deepseek.com/chat/completions", method="POST",
                   headers={"Authorization": f"Bearer {DS_KEY}"},
-                  data={"model": "deepseek-chat", "max_tokens": 1500, "temperature": 0.7,
+                  data={"model": "deepseek-chat", "max_tokens": 4000, "temperature": 0.7,
                         "messages": [{"role": "user", "content": prompt}]})
     text = r["choices"][0]["message"]["content"]
     m = re.search(r"\[.*\]", text, re.S)
     try:
         notes = json.loads(m.group(0)) if m else []
         for n in notes:
-            n.setdefault("tag", "科普📖")
+            if n.get("direction") not in DIRECTIONS:
+                n["direction"] = "提效"
+            if not isinstance(n.get("keywords"), list):
+                n["keywords"] = [str(n.get("keywords", ""))] if n.get("keywords") else []
         return notes
     except Exception:
         return []
+
+def balance_by_direction(items, notes):
+    """按 3+3+2+2 配额挑出最终 10 条（notes 已带 direction）。
+
+    策略：先按方向归类，各方向优先取 life/hot 分高的；不足配额从其他方向按分补，"
+    最终保证 10 条。
+    """
+    scored = list(zip(items, notes))
+    def score(pair):
+        it = pair[0]
+        return hot_score(it) if it.get("_channel") else life_score(it)
+    buckets = {d: [] for d in DIRECTIONS}
+    for pair in scored:
+        d = pair[1].get("direction")
+        if d in buckets:
+            buckets[d].append(pair)
+    for d in buckets:
+        buckets[d].sort(key=score, reverse=True)
+    picked, used = [], set()
+    for d in DIRECTIONS:
+        for pair in buckets[d][:DIR_QUOTA[d]]:
+            picked.append(pair); used.add(id(pair))
+    # 补足到 10 条
+    rest = [p for p in sorted(scored, key=score, reverse=True) if id(p) not in used]
+    for pair in rest:
+        if len(picked) >= 10:
+            break
+        picked.append(pair)
+    picked = picked[:10]
+    # 交错排序：让四个方向轮流出现，首页不会一屏全是同一方向
+    by_d = {d: [p for p in picked if p[1].get("direction") == d] for d in DIRECTIONS}
+    interleaved, idx = [], 0
+    while len(interleaved) < len(picked):
+        for d in DIRECTIONS:
+            if idx < len(by_d[d]):
+                interleaved.append(by_d[d][idx])
+        idx += 1
+    picked = interleaved
+    return [p[0] for p in picked], [p[1] for p in picked]
 
 def fmt_read(n):
     if n >= 100000: return "10万+"
@@ -255,62 +327,72 @@ def fmt_read(n):
     return str(n)
 
 def render_html(items, notes, date_str, balance):
+    """详情页：展示 10 条日报的完整 6 字段（方向/来源/痛点/切入点/关键词/评价）。"""
     today_cn = datetime.date.today().strftime("%Y年%m月%d日")
     rows = []
     for i, (it, note) in enumerate(zip(items, notes), 1):
-        tag = note.get("tag", "科普📖")
-        color = TAG_COLORS.get(tag, "#94a3b8")
-        why = (note.get("why", "") or "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        d = note.get("direction", "提效")
+        color = DIR_COLOR.get(d, "#94a3b8")
+        kws = note.get("keywords") or []
+        kw_html = "".join(f'<span class="kw">{html.escape(str(k))}</span>' for k in kws)
         rows.append(f"""
     <div class="item">
-      <div class="no">{i}</div>
-      <div class="body">
-        <a class="t" href="{html.escape(it['content_url'])}" target="_blank" rel="noopener">{html.escape(it['title'])}</a>
-        <div class="why">{html.escape(why)}</div>
-        <div class="meta"><span class="tag" style="color:{color}">{tag}</span>📰 {html.escape(it.get('nickname',''))} · 🔥 {fmt_read(it.get('read_num',0))}</div>
+      <div class="ihead">
+        <span class="no">{i}</span>
+        <span class="dir" style="color:{color};border-color:{color}">{html.escape(d)}</span>
+        <span class="src">📰 {html.escape(it.get('nickname',''))}</span>
       </div>
+      <a class="t" href="{html.escape(it['content_url'])}" target="_blank" rel="noopener">{html.escape(note.get('title') or it['title'])}</a>
+      {f'<div class="fld"><b>痛点</b>{html.escape(note.get("pain",""))}</div>' if note.get('pain') else ''}
+      {f'<div class="fld"><b>切入点</b>{html.escape(note.get("angle",""))}</div>' if note.get('angle') else ''}
+      {f'<div class="kws">{kw_html}</div>' if kw_html else ''}
+      {f'<div class="review">💬 {html.escape(note.get("review",""))}</div>' if note.get('review') else ''}
     </div>""")
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生活科技日报 {date_str} - 今天跟你有关系的 10 条科技信息</title>
-<meta name="description" content="每日 10 条贴近生活的科技信息：省钱、避坑、提效、护隐私，每条一句「对你有啥用」。">
+<title>今日生活科技 {date_str} - 省钱·避坑·提效·护隐私 10 条</title>
+<meta name="description" content="每天 10 条跟你有关系的科技信息：省钱、避坑、提效、护隐私，每条附痛点、切入点与深度评价。">
 <style>
   body{{margin:0;background:#0f172a;color:#e2e8f0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}}
-  .wrap{{max-width:720px;margin:0 auto;padding:20px 16px 40px}}
+  .wrap{{max-width:760px;margin:0 auto;padding:20px 16px 40px}}
   header{{text-align:center;padding:28px 0 14px}}
   header h1{{margin:0;font-size:22px;letter-spacing:1px}}
   header p{{color:#94a3b8;font-size:13px;margin:6px 0 0}}
-  .list{{background:#1e293b;border-radius:14px;padding:4px 18px;margin-top:6px}}
-  .item{{display:flex;gap:14px;padding:16px 0;border-top:1px solid #334155;align-items:flex-start}}
+  .list{{background:#1e293b;border-radius:14px;padding:6px 20px;margin-top:6px}}
+  .item{{padding:20px 0;border-top:1px solid #334155}}
   .item:first-child{{border-top:none}}
-  .no{{flex:0 0 24px;height:24px;line-height:24px;text-align:center;background:#60a5fa;color:#0f172a;border-radius:7px;font-size:13px;font-weight:700;margin-top:2px}}
-  .body{{flex:1;min-width:0}}
-  .t{{color:#e2e8f0;text-decoration:none;font-size:16px;font-weight:600;display:block}}
+  .ihead{{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}}
+  .no{{flex:0 0 24px;height:24px;line-height:24px;text-align:center;background:#60a5fa;color:#0f172a;border-radius:7px;font-size:13px;font-weight:700}}
+  .dir{{font-size:12px;font-weight:700;border:1px solid;border-radius:10px;padding:1px 9px}}
+  .src{{font-size:12px;color:#94a3b8}}
+  .t{{color:#e2e8f0;text-decoration:none;font-size:17px;font-weight:700;display:block;line-height:1.5}}
   .t:hover{{color:#60a5fa}}
-  .why{{margin:5px 0 0;font-size:14px;color:#fbbf24}}
-  .meta{{margin:6px 0 0;font-size:12px;color:#94a3b8}}
-  .tag{{display:inline-block;font-weight:700;margin-right:8px}}
+  .fld{{margin:8px 0 0;font-size:14px;color:#cbd5e1}}
+  .fld b{{display:inline-block;color:#60a5fa;font-size:12px;font-weight:700;margin-right:8px;border:1px solid #334155;border-radius:6px;padding:0 6px}}
+  .kws{{margin:9px 0 0}}
+  .kw{{display:inline-block;font-size:12px;color:#94a3b8;border:1px solid #334155;border-radius:10px;padding:1px 9px;margin:0 6px 6px 0}}
+  .review{{margin:9px 0 0;font-size:14px;color:#fbbf24}}
   .follow{{text-align:center;background:#1e293b;border-radius:12px;padding:18px;margin-top:26px}}
   .follow b{{color:#60a5fa}}
   footer{{text-align:center;color:#64748b;font-size:12px;margin-top:22px}}
   a.back{{color:#94a3b8;font-size:13px;text-decoration:none}}
-  @media(max-width:560px){{.list{{padding:2px 12px}}.t{{font-size:15px}}}}
+  @media(max-width:560px){{.list{{padding:2px 13px}}.t{{font-size:15.5px}}}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>📡 KTcove 生活科技日报</h1>
-    <p>{today_cn} · 今天跟你有关系的 {len(items)} 条科技信息</p>
+    <h1>📡 KTcove 今日生活科技</h1>
+    <p>{today_cn} · 省钱 · 避坑 · 提效 · 护隐私 ，共 {len(items)} 条</p>
   </header>
   <div class="list">{''.join(rows)}
   </div>
   <div class="follow">
-    <p><b>每天 17:40 自动推送</b>，关注公众号「KTCOVE宝藏小站」不迷路</p>
-    <p style="color:#94a3b8;font-size:13px"><a class="back" href="https://www.ktcove.com/daily/">查看历史日报 →</a> · 完整评测与工具推荐，公众号回复「目录」</p>
+    <p><b>每天 17:40 自动更新</b>，关注公众号「KTCOVE宝藏小站」不迷路</p>
+    <p style="color:#94a3b8;font-size:13px"><a class="back" href="https://www.ktcove.com/daily/">查看历史日报 →</a></p>
   </div>
   <footer><a class="back" href="https://www.ktcove.com/">← 返回首页 KTcove 寻宝人</a></footer>
 </div>
@@ -334,15 +416,15 @@ def update_index(daily_path, today_items, notes):
         return
     rows = []
     for i, (it, note) in enumerate(zip(today_items, notes), 1):
-        tag = note.get("tag", "科普📖")
-        color = TAG_COLORS.get(tag, "#94a3b8")
-        why = note.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        d = note.get("direction", "提效")
+        color = DIR_COLOR.get(d, "#94a3b8")
+        review = (note.get("review", "") or "").strip()
         rows.append(
             f'        <div class="ditem">\n'
             f'          <div class="dno">{i}</div>\n'
             f'          <div class="dmain">\n'
-            f'            <a class="dtitle" href="{daily_path}">{html.escape(it["title"])}</a>\n'
-            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(tag)}</span>{html.escape(why)}</div>\n'
+            f'            <a class="dtitle" href="{daily_path}">{html.escape(note.get("title") or it["title"])}</a>\n'
+            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(d)}</span>{html.escape(review)}</div>\n'
             f'          </div>\n'
             f'        </div>'
         )
@@ -351,16 +433,16 @@ def update_index(daily_path, today_items, notes):
     with open(idx, "w", encoding="utf-8") as f: f.write(src)
 
 def compute_hot_words(items, notes):
-    """从当天标题+摘要统计生活热词，取前 5 个作为标签。"""
+    """从当天标题+评价统计热词，取前 5 个作为归档页标签。"""
     text = " ".join(it.get("title", "") for it in items)
-    text += " " + " ".join(n.get("summary", "") + n.get("why", "") for n in notes)
+    text += " " + " ".join((n.get("review", "") + " " + n.get("pain", "")) for n in notes)
     counts = {}
     for kw in LIFE_KW:
         c = text.lower().count(kw.lower())
         if c:
             counts[kw] = c
     top = [k for k, _ in sorted(counts.items(), key=lambda x: -x[1])][:5]
-    return top or ["省钱", "避坑", "免费", "手机", "电池"]
+    return top or ["省钱", "避坑", "提效", "护隐私", "手机"]
 
 def update_data_json(daily_dir, date_str, items, notes, rel):
     """维护 daily/data.json：按日期归档所有文章，供归档页搜索使用。"""
@@ -375,11 +457,13 @@ def update_data_json(daily_dir, date_str, items, notes, rel):
     store[date_str] = [
         {
             "date": date_str,
-            "title": it["title"],
+            "title": note.get("title") or it["title"],
             "nickname": it.get("nickname", ""),
-            "summary": note.get("summary", ""),
-            "why": note.get("why", ""),
-            "tag": note.get("tag", "科普📖"),
+            "direction": note.get("direction", "提效"),
+            "pain": note.get("pain", ""),
+            "angle": note.get("angle", ""),
+            "keywords": note.get("keywords", []),
+            "review": note.get("review", ""),
             "url": f"{DAILY_URL_PREFIX}{date_str}.html",
             "article_url": it.get("content_url", ""),
         }
@@ -449,7 +533,7 @@ def update_archive(daily_dir, hot_words):
   <footer><a class="back" href="https://www.ktcove.com/">← 返回首页</a></footer>
 </div>
 <script>
-const TAG_COLOR = {{"省💰":"#eab308","避坑⚠️":"#ef4444","提效⚡":"#22c55e","隐私🔒":"#3b82f6","健康❤️":"#ec4899","科普📖":"#94a3b8"}};
+const DIR_COLOR = {{"省钱":"#eab308","避坑":"#ef4444","提效":"#22c55e","护隐私":"#3b82f6"}};
 let ALL = [];
 fetch('data.json').then(r => r.json()).then(store => {{
   for (const [d, arr] of Object.entries(store)) ALL = ALL.concat(arr);
@@ -460,10 +544,12 @@ function render(list) {{
   const box = document.getElementById('results');
   if (!list.length) {{ box.style.display='block'; box.innerHTML='<p class="none">没有找到相关内容，换个词试试～</p>'; return; }}
   box.innerHTML = list.map(e => {{
-    const c = TAG_COLOR[e.tag] || '#94a3b8';
+    const c = DIR_COLOR[e.direction] || '#94a3b8';
+    const kws = (e.keywords || []).slice(0, 3).map(k => '#' + esc(k)).join(' ');
     return '<div class="res"><a href="' + esc(e.url) + '">' + esc(e.title) + '</a>' +
-      '<div class="meta">📅 ' + esc(e.date) + ' · 📰 ' + esc(e.nickname) + ' · <span class="tagc" style="color:' + c + '">' + esc(e.tag) + '</span></div>' +
-      '<div class="meta">' + esc(e.summary || '') + '</div></div>';
+      '<div class="meta">📅 ' + esc(e.date) + ' · 📰 ' + esc(e.nickname) + ' · <span class="tagc" style="color:' + c + '">' + esc(e.direction) + '</span></div>' +
+      '<div class="meta">' + esc(e.review || '') + '</div>' +
+      (kws ? '<div class="meta">' + kws + '</div>' : '') + '</div>';
   }}).join('');
   box.style.display = 'block';
 }}
@@ -472,7 +558,7 @@ function doSearch() {{
   const days = document.getElementById('days');
   const hint = document.getElementById('hint');
   if (!kw) {{ days.style.display='block'; hint.style.display='block'; document.getElementById('results').style.display='none'; return; }}
-  const list = ALL.filter(e => (e.title + e.summary + e.why + e.tag + e.nickname).toLowerCase().includes(kw));
+  const list = ALL.filter(e => (e.title + ' ' + (e.review||'') + ' ' + (e.pain||'') + ' ' + (e.angle||'') + ' ' + ((e.keywords||[]).join(' ')) + ' ' + (e.direction||'') + ' ' + e.nickname).toLowerCase().includes(kw));
   days.style.display = 'none'; hint.style.display = 'none';
   render(list);
 }}
@@ -553,7 +639,31 @@ def main():
         items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
     items.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
-    items = items[:TOP_N]
+    # 方向感知预筛：每个方向至少保底若干条候选，保证 DeepSeek 有料可分
+    def dir_of(it):
+        t = it.get("title", "")
+        best, bestc = None, 0
+        for d, kws in DIR_KW.items():
+            c = sum(1 for k in kws if k in t)
+            if c > bestc:
+                best, bestc = d, c
+        return best
+    by_dir = {d: [] for d in DIRECTIONS}
+    others = []
+    for it in items:
+        d = dir_of(it)
+        (by_dir[d] if d in by_dir else others).append(it)
+    pool, picked_ids = [], set()
+    for d in DIRECTIONS:            # 每方向先取前 5 条
+        for it in by_dir[d][:5]:
+            pool.append(it); picked_ids.add(id(it))
+    for it in (by_dir.get(None, []) + others):
+        if len(pool) >= 20:
+            break
+        if id(it) not in picked_ids:
+            pool.append(it); picked_ids.add(id(it))
+    pool.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
+    items = pool[:18]
     if len(items) < 5:
         print(f"[warn] 有效文章仅 {len(items)} 条，检查过滤规则")
     if not items:
@@ -561,8 +671,37 @@ def main():
         print("[err] 未生成任何文件，不提交，等待下次运行。")
         return
     notes = summarize(items)
-    if len(notes) != len(items):
-        notes = [{"title": it["title"], "summary": "", "why": "", "tag": "科普📖"} for it in items]
+    if not notes:
+        print("[warn] DeepSeek 未返回有效内容，使用占位（保留标题）")
+        notes = [{"title": it["title"], "direction": "提效", "pain": "", "angle": "",
+                  "keywords": [], "review": ""} for it in items]
+    # DeepSeek 会自行精选/改写，条数可能少于输入：按标题对齐回原始 it（保链接/来源）
+    used = set()
+    aligned = []
+    for n in notes:
+        t = (n.get("title") or "").strip()
+        match = None
+        for it in items:
+            if id(it) in used:
+                continue
+            if t and (t == it["title"].strip() or t[:8] in it["title"] or it["title"][:8] in t):
+                match = it; break
+        if match is None:
+            # 按顺序补位
+            for it in items:
+                if id(it) not in used:
+                    match = it; break
+        if match is not None:
+            used.add(id(match))
+            aligned.append((match, n))
+    if not aligned:
+        aligned = list(zip(items, notes))
+    items = [p[0] for p in aligned]
+    notes = [p[1] for p in aligned]
+    # 按 3+3+2+2 配额挑出最终 10 条
+    items, notes = balance_by_direction(items, notes)
+    print(f"[info] 最终 {len(items)} 条，方向分布：" +
+          ", ".join(f"{d}{sum(1 for n in notes if n.get('direction')==d)}" for d in DIRECTIONS))
 
     daily_dir = os.path.join(SITE, "daily"); os.makedirs(daily_dir, exist_ok=True)
     rel = f"daily/{date_str}.html"

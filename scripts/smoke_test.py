@@ -17,11 +17,12 @@ items = [{
     "read_num": 12345, "share_num": 100,
     "content_url": r.get("article_url", "#"),
 } for r in rows]
-notes = [{"title": r["title"], "summary": r["summary"], "why": r["why"], "tag": r["tag"]} for r in rows]
+notes = [{"title": r["title"], "direction": r.get("direction", "提效"), "pain": r.get("pain", ""),
+          "angle": r.get("angle", ""), "keywords": r.get("keywords", []), "review": r.get("review", "")} for r in rows]
 
 # 1) 渲染当日页
 html_out = g.render_html(items, notes, latest, "TEST")
-assert "card" in html_out and items[0]["title"] in html_out
+assert "class=\"item\"" in html_out and notes[0]["title"] in html_out
 print(f"[ok] render_html 生成，{len(items)} 条")
 
 # 2) 更新首页（写临时副本，避免污染真实 index.html）

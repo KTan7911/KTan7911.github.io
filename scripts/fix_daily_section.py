@@ -7,10 +7,7 @@
 import os, re, json, html
 
 SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TAG_COLORS = {"省💰": "#eab308", "避坑⚠️": "#ef4444", "提效⚡": "#22c55e",
-              "隐私🔒": "#3b82f6", "健康❤️": "#ec4899", "科普📖": "#94a3b8"}
-TAG_SHORT = {"省💰": "省💰", "避坑⚠️": "避坑⚠️", "提效⚡": "提效⚡",
-             "隐私🔒": "隐私🔒", "健康❤️": "健康❤️", "科普📖": "科普📖"}
+TAG_COLORS = {"省钱": "#eab308", "避坑": "#ef4444", "提效": "#22c55e", "护隐私": "#3b82f6"}
 
 LIST_START = "<!--DAILY_LIST_START-->"
 LIST_END = "<!--DAILY_LIST_END-->"
@@ -45,16 +42,16 @@ def load_items():
 def render_list(items):
     rows = []
     for i, it in enumerate(items, 1):
-        tag = it.get("tag", "科普📖")
-        color = TAG_COLORS.get(tag, "#94a3b8")
-        why = it.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        d = it.get("direction", "提效")
+        color = TAG_COLORS.get(d, "#94a3b8")
+        review = (it.get("review", "") or "").strip()
         url = html.escape(it.get("url", "#"))
         rows.append(
             f'        <div class="ditem">\n'
             f'          <div class="dno">{i}</div>\n'
             f'          <div class="dmain">\n'
             f'            <a class="dtitle" href="{url}">{html.escape(it.get("title",""))}</a>\n'
-            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(tag)}</span>{html.escape(why)}</div>\n'
+            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(d)}</span>{html.escape(review)}</div>\n'
             f'          </div>\n'
             f'        </div>'
         )
