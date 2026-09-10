@@ -154,6 +154,16 @@ async function startApp(){
   renderMoodStrip();
   await loadEntries();
   renderStream();
+  refreshBuddy();
+  try { await PROFILE.load(); PROFILE.applyAvatar(); } catch(e) {}
+}
+
+/* ---------- 陪伴树苗 ---------- */
+function refreshBuddy(){
+  window.__entries = entries;
+  const s = BUDDY.stats(entries);
+  const el = $('#buddy');
+  if (el) BUDDY.render(el, s);
 }
 
 /* ---------- 心情胶囊 ---------- */
@@ -332,6 +342,7 @@ async function pushEntry(payload){
     if (row) {
       entries.push(row);
       appendEntry(row);
+      refreshBuddy();
     }
   } catch(err) {
     console.error(err);
@@ -437,10 +448,14 @@ function initComposer(){
    顶部按钮 / Tab
    ========================================================== */
 function initChrome(){
-  $('#logoutBtn').addEventListener('click', logout);
-
   $('#openHole').addEventListener('click', () => openHole());
   $('#closeHole').addEventListener('click', () => $('#holepage').classList.add('hidden'));
+
+  $('#openProfile').addEventListener('click', () => PROFILE.open());
+  $('#closeProfile').addEventListener('click', () => PROFILE.close());
+  $('#pfSave').addEventListener('click', () => PROFILE.save());
+  $('#pwSubmit').addEventListener('click', () => PROFILE.changePassword());
+  $('#logoutBtn').addEventListener('click', logout);
 }
 
 /* ==========================================================

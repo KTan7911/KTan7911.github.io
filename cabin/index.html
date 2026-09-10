@@ -63,16 +63,19 @@
 
   <!-- 顶部 -->
   <div class="top">
-    <div class="avatar">🏠</div>
+    <div class="avatar" id="topAvatar">🌱</div>
     <div class="tinfo">
-      <div class="t1">我的小屋</div>
+      <div class="t1" id="topTitle">我的小屋</div>
       <div class="t2" id="topSub">只有你自己看得见 🌿</div>
     </div>
     <div class="tright">
       <div class="tbtn" id="openHole" title="我的树洞">📜</div>
-      <div class="tbtn" id="logoutBtn" title="退出">⚙️</div>
+      <div class="tbtn" id="openProfile" title="设置">⚙️</div>
     </div>
   </div>
+
+  <!-- 陪伴树苗 -->
+  <div class="buddy" id="buddy"></div>
 
   <!-- 聊天流 -->
   <div class="stream" id="stream"></div>
@@ -109,11 +112,112 @@
   </div>
 </div>
 
+<!-- ============ 设置 / 资料页 ============ -->
+<div class="page hidden" id="profilepage">
+  <div class="pagehead">
+    <div class="tbtn" id="closeProfile">←</div>
+    <div class="ptitle">我的信息</div>
+    <button class="btn btn-soft" id="pfSave" style="padding:8px 16px;font-size:12.5px">保存</button>
+  </div>
+  <div class="pagebody">
+
+    <!-- 树苗 + 活跃度 -->
+    <div class="pfcard pf-buddy">
+      <div class="pfb-art" id="pfBuddy">🌿</div>
+      <div class="pfb-info">
+        <div class="pfb-label">陪伴树苗</div>
+        <div class="pfb-sub" id="pfBuddyLabel">安静陪着</div>
+      </div>
+    </div>
+    <div class="pstatgrid" id="pfStats"></div>
+
+    <!-- 头像 -->
+    <div class="pfcard">
+      <div class="pfsec">
+        <div class="pflabel">头像</div>
+        <div class="pfsublabel">选一个喜欢的形象</div>
+        <div class="avgrid" id="pfAvatars"></div>
+      </div>
+    </div>
+
+    <!-- 基本信息 -->
+    <div class="pfcard">
+      <div class="pfsec">
+        <div class="pflabel">昵称</div>
+        <input type="text" id="pfNick" class="field" placeholder="给自己起个名字">
+      </div>
+      <div class="pfsec">
+        <div class="pflabel">一句话签名</div>
+        <input type="text" id="pfBio" class="field" placeholder="今天想说什么">
+      </div>
+      <div class="pfrow2">
+        <div class="pfsec">
+          <div class="pflabel">生日</div>
+          <input type="date" id="pfBirth" class="field">
+        </div>
+        <div class="pfsec">
+          <div class="pflabel">性别</div>
+          <select id="pfGender" class="field">
+            <option value="">不设置</option>
+            <option value="男">男</option>
+            <option value="女">女</option>
+            <option value="保密">保密</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 爱好 -->
+    <div class="pfcard">
+      <div class="pfsec">
+        <div class="pflabel">爱好</div>
+        <div class="pfsublabel">可以多选</div>
+        <div class="hobbies" id="pfHobbies"></div>
+      </div>
+    </div>
+
+    <!-- 账号 -->
+    <div class="pfcard">
+      <div class="pfsec">
+        <div class="pflabel">账号</div>
+        <div class="pfemail" id="pfEmail">—</div>
+      </div>
+    </div>
+
+    <!-- 修改密码 -->
+    <div class="pfcard">
+      <div class="pfsec">
+        <div class="pflabel">修改密码</div>
+        <input type="password" id="pwNew" class="field" placeholder="新密码（至少 6 位）" style="margin-bottom:10px">
+        <input type="password" id="pwNew2" class="field" placeholder="再输一次" style="margin-bottom:12px">
+        <button class="btn btn-line" id="pwSubmit" style="width:100%" >修改密码</button>
+      </div>
+    </div>
+
+    <!-- 隐私说明 -->
+    <div class="pfcard pf-note">
+      <div style="font-size:22px;margin-bottom:10px">🔒</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--ink2)">
+        这些信息只有你自己看得到。<br>
+        你的记录写下去就改不了也删不掉——<br>这是故意的，让每一次真实都被保留。
+      </div>
+    </div>
+
+    <!-- 退出 -->
+    <button class="btn btn-primary" id="logoutBtn"
+      style="background:linear-gradient(135deg,#ffb3a7,#ff8fa3);margin-top:4px">退出登录</button>
+
+    <div style="height:30px"></div>
+  </div>
+</div>
+
 <!-- ============ Toast ============ -->
 <div class="toast" id="toast"></div>
 
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/buddy.js"></script>
+<script src="js/profile.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
