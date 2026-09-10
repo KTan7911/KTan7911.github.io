@@ -98,7 +98,7 @@ const SB = (() => {
   }
 
   /* ---------- Database (PostgREST) ---------- */
-  async function db(table) {
+  function db(table) {
     const base = U + '/rest/v1/' + table;
     // 用 _q 避免字段名与方法名冲突
     const _q = { select: null, filters: [], order: null, limit: null };
