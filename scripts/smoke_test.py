@@ -32,11 +32,11 @@ with open(bak, "w", encoding="utf-8") as f: f.write(original)
 try:
     g.update_index(f"daily/{latest}.html", items, notes)
     with open(idx, encoding="utf-8") as f: after = f.read()
-    # 校验：锚点仍成对、卡片数=3、没有孤立 </a>
+    # 校验：锚点仍成对、列表行数=len(items)、无游离元素
     assert after.count(g.GRID_START) == 1 and after.count(g.GRID_END) == 1, "锚点不成对"
     seg = after[after.find(g.GRID_START):after.find(g.GRID_END)]
-    assert seg.count('<a class="card') == min(3, len(items)), f"卡片数异常 {seg.count('<a class=\"card')}"
-    print("[ok] update_index 锚点替换正常，卡片数正确")
+    assert seg.count('class="ditem"') == len(items), f"列表行数异常 {seg.count('class="ditem"')} != {len(items)}"
+    print(f"[ok] update_index 锚点替换正常，{len(items)} 条清单")
 finally:
     with open(idx, "w", encoding="utf-8") as f: f.write(original)
     os.remove(bak)

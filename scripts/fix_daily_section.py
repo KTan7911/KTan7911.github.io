@@ -1,58 +1,80 @@
 #!/usr/bin/env python3
-"""一次性修复首页 #daily 板块被 generate_daily.py 旧版 update_index() 破坏的 HTML。
+"""重建首页 #daily 板块：改为「10 条清单」布局（标题 + 一句点评），一眼扫完。
 
-做法：
-1. 找到 <!-- 今日生活科技 --> 段起始的 <section ... id="daily"> 到它的 </section>
-2. 用干净的、带锚点注释的板块替换（锚点供新版 update_index() 精确替换卡片区）
-3. 从 daily/data.json 取最近一天的 Top 3 重建成整齐网格卡片
+- 用 <!--DAILY_LIST_START--> / <!--DAILY_LIST_END--> 锚点
+- 从 daily/data.json 取最近一天的 10 条
 """
 import os, re, json, html
 
 SITE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TAG_COLORS = {"省💰": "#eab308", "避坑⚠️": "#ef4444", "提效⚡": "#22c55e",
               "隐私🔒": "#3b82f6", "健康❤️": "#ec4899", "科普📖": "#94a3b8"}
+TAG_SHORT = {"省💰": "省💰", "避坑⚠️": "避坑⚠️", "提效⚡": "提效⚡",
+             "隐私🔒": "隐私🔒", "健康❤️": "健康❤️", "科普📖": "科普📖"}
 
-GRID_START = "<!--DAILY_GRID_START-->"
-GRID_END = "<!--DAILY_GRID_END-->"
+LIST_START = "<!--DAILY_LIST_START-->"
+LIST_END = "<!--DAILY_LIST_END-->"
+
+LIST_CSS = """  <style>
+    .dlist{margin-top:8px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card-bg)}
+    .ditem{display:flex;gap:12px;padding:14px 18px;border-top:1px solid var(--border);align-items:flex-start;transition:background .18s}
+    .ditem:first-child{border-top:none}
+    .ditem:hover{background:rgba(99,102,241,.06)}
+    .dno{flex:0 0 26px;height:26px;line-height:26px;text-align:center;border-radius:7px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;margin-top:1px}
+    .dmain{flex:1;min-width:0}
+    .dtitle{font-size:15.5px;font-weight:600;color:var(--text);text-decoration:none;display:block}
+    .dtitle:hover{color:var(--primary)}
+    .dmeta{margin-top:4px;font-size:13px;color:var(--text-light);line-height:1.55}
+    .dtag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:9px;background:rgba(148,163,184,.16);margin-right:6px;white-space:nowrap}
+    @media(max-width:560px){.ditem{padding:12px 12px}.dtitle{font-size:14.5px}}
+  </style>"""
 
 
-def load_latest_items():
+def load_items():
     p = os.path.join(SITE, "daily", "data.json")
     if not os.path.exists(p):
-        return []
+        return None, []
     with open(p, encoding="utf-8") as f:
         store = json.load(f)
     if not store:
-        return []
+        return None, []
     latest = sorted(store.keys(), reverse=True)[0]
-    return latest, store[latest][:3]
+    return latest, store[latest]
 
 
-def card(it):
-    tag = it.get("tag", "科普📖")
-    color = TAG_COLORS.get(tag, "#94a3b8")
-    why = it.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "")[:46]
-    return f'''<a class="card project-card" href="{html.escape(it.get('url', '#'))}">
-          <div class="card-icon">📰</div>
-          <h3>{html.escape(it.get('title', ''))}</h3>
-          <p>📰 {html.escape(it.get('nickname', ''))} · <span style="color:{color}">{tag}</span> · {html.escape(why)}</p>
-          <span class="card-link">查看全文 →</span>
-        </a>'''
+def render_list(items):
+    rows = []
+    for i, it in enumerate(items, 1):
+        tag = it.get("tag", "科普📖")
+        color = TAG_COLORS.get(tag, "#94a3b8")
+        why = it.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        url = html.escape(it.get("url", "#"))
+        rows.append(
+            f'        <div class="ditem">\n'
+            f'          <div class="dno">{i}</div>\n'
+            f'          <div class="dmain">\n'
+            f'            <a class="dtitle" href="{url}">{html.escape(it.get("title",""))}</a>\n'
+            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(tag)}</span>{html.escape(why)}</div>\n'
+            f'          </div>\n'
+            f'        </div>'
+        )
+    return "\n".join(rows)
 
 
 def build_section(latest_date, items):
-    cards = "\n        ".join(card(it) for it in items)
+    lst = render_list(items)
     return f'''<!-- 今日生活科技（每日自动更新） -->
   <section class="section section-alt" id="daily">
     <div class="container">
       <h2 class="section-title">📰 今日生活科技</h2>
       <p class="section-desc">每天 10 条跟你有关系的科技信息：省钱、避坑、提效、护隐私，每条附一句「对你有啥用」。不聊宏大命题，只说生活里用得上。</p>
-      <div class="grid">
-        {GRID_START}
-        {cards}
-        {GRID_END}
+{LIST_CSS}
+      <div class="dlist">
+        {LIST_START}
+{lst}
+        {LIST_END}
       </div>
-      <p style="text-align:center;margin-top:26px"><a class="card-link" href="daily/{latest_date}.html">查看完整日报（10 条）→</a></p>
+      <p style="text-align:center;margin-top:22px"><a class="card-link" href="daily/{latest_date}.html">查看完整日报（10 条）→</a></p>
     </div>
   </section>'''
 
@@ -62,10 +84,8 @@ def main():
     with open(idx, encoding="utf-8") as f:
         src = f.read()
 
-    # 定位损坏的 section：从「今日生活科技」注释起到其后第一个 </section>
     m = re.search(r"<!--\s*今日生活科技[^>]*-->\s*<section[^>]*id=\"daily\"", src)
     if not m:
-        # 兜底：直接找 id="daily"
         m = re.search(r'<section[^>]*id="daily"', src)
     if not m:
         print("[err] 找不到 #daily 板块")
@@ -77,16 +97,15 @@ def main():
         return
     sec_end += len("</section>")
 
-    latest_date, items = load_latest_items()
+    latest_date, items = load_items()
     if not items:
-        print("[err] daily/data.json 为空，用占位")
-        latest_date, items = "2026-08-24", []
+        print("[err] daily/data.json 为空")
+        return
     new_sec = build_section(latest_date, items)
-
     src = src[:start] + new_sec + src[sec_end:]
     with open(idx, "w", encoding="utf-8") as f:
         f.write(src)
-    print(f"OK: #daily 板块已重建（{len(items)} 张卡片，日期 {latest_date}）")
+    print(f"OK: #daily 已改为 {len(items)} 条清单布局（日期 {latest_date}）")
 
 
 if __name__ == "__main__":

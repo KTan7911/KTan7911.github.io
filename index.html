@@ -145,29 +145,94 @@
     <div class="container">
       <h2 class="section-title">📰 今日生活科技</h2>
       <p class="section-desc">每天 10 条跟你有关系的科技信息：省钱、避坑、提效、护隐私，每条附一句「对你有啥用」。不聊宏大命题，只说生活里用得上。</p>
-      <div class="grid">
-        <!--DAILY_GRID_START-->
-        <a class="card project-card" href="daily/2026-09-10.html">
-          <div class="card-icon">📰</div>
-          <h3>苹果折叠屏让人更怀念乔布斯了</h3>
-          <p>📰 百度 · <span style="color:#ef4444">避坑⚠️</span> · 换手机前别急着跟风，折叠屏又贵又容易坏，想清楚再买。</p>
-          <span class="card-link">查看全文 →</span>
-        </a>
-        <a class="card project-card" href="daily/2026-09-10.html">
-          <div class="card-icon">📰</div>
-          <h3>建议大家把内裤袜子丢洗衣机洗</h3>
-          <p>📰 微博 · <span style="color:#22c55e">提效⚡</span> · 省下手洗时间，机洗更干净，但记得加消毒液、别和外套混洗。</p>
-          <span class="card-link">查看全文 →</span>
-        </a>
-        <a class="card project-card" href="daily/2026-09-10.html">
-          <div class="card-icon">📰</div>
-          <h3>如何看待高考数学 132 分的学生在西电数学开学考只考 12 分，33 分竟位列前 6%？大学入学考是在考察什么？</h3>
-          <p>📰 知乎 · <span style="color:#94a3b8">科普📖</span> · 家里有刚上大学的娃，别拿高考成绩当护身符，大学得重新适应学习节奏。</p>
-          <span class="card-link">查看全文 →</span>
-        </a>
-        <!--DAILY_GRID_END-->
+  <style>
+    .dlist{margin-top:8px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--card-bg)}
+    .ditem{display:flex;gap:12px;padding:14px 18px;border-top:1px solid var(--border);align-items:flex-start;transition:background .18s}
+    .ditem:first-child{border-top:none}
+    .ditem:hover{background:rgba(99,102,241,.06)}
+    .dno{flex:0 0 26px;height:26px;line-height:26px;text-align:center;border-radius:7px;background:var(--primary);color:#fff;font-size:13px;font-weight:700;margin-top:1px}
+    .dmain{flex:1;min-width:0}
+    .dtitle{font-size:15.5px;font-weight:600;color:var(--text);text-decoration:none;display:block}
+    .dtitle:hover{color:var(--primary)}
+    .dmeta{margin-top:4px;font-size:13px;color:var(--text-light);line-height:1.55}
+    .dtag{display:inline-block;font-size:12px;padding:1px 8px;border-radius:9px;background:rgba(148,163,184,.16);margin-right:6px;white-space:nowrap}
+    @media(max-width:560px){.ditem{padding:12px 12px}.dtitle{font-size:14.5px}}
+  </style>
+      <div class="dlist">
+        <!--DAILY_LIST_START-->
+        <div class="ditem">
+          <div class="dno">1</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">苹果折叠屏让人更怀念乔布斯了</a>
+            <div class="dmeta"><span class="dtag" style="color:#ef4444">避坑⚠️</span>想换手机的先别急，看看真实评价再决定，免得花冤枉钱。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">2</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">建议大家把内裤袜子丢洗衣机洗</a>
+            <div class="dmeta"><span class="dtag" style="color:#22c55e">提效⚡</span>省下手洗时间，还能洗得更干净，但记得分开洗、加消毒液。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">3</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">如何看待高考数学 132 分的学生在西电数学开学考只考 12 分，33 分竟位列前 6%？大学入学考是在考察什么？</a>
+            <div class="dmeta"><span class="dtag" style="color:#94a3b8">科普📖</span>家里有刚上大学的，提醒他别吃老本，开学考砸不代表不行，早点适应就好。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">4</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">我本来想给你买手机的</a>
+            <div class="dmeta"><span class="dtag" style="color:#94a3b8">科普📖</span>当个乐子看就行，别当真，也别被人用这种话忽悠。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">5</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">王者万象棋新手攻略</a>
+            <div class="dmeta"><span class="dtag" style="color:#22c55e">提效⚡</span>想玩又怕坑队友的，看一遍能少走弯路，省时间少生气。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">6</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">一个视频看懂苹果发布会亮点</a>
+            <div class="dmeta"><span class="dtag" style="color:#22c55e">提效⚡</span>省时间，几分钟就知道新机值不值得买，不用被广告忽悠。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">7</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">手机进入奢侈品时代</a>
+            <div class="dmeta"><span class="dtag" style="color:#eab308">省💰</span>换手机前先想清楚需求，别为用不上的功能多花几千块。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">8</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">老款iPhone成“理财产品”了吗</a>
+            <div class="dmeta"><span class="dtag" style="color:#eab308">省💰</span>家里有闲置旧iPhone的先别扔，查查二手价，可能能卖个好价钱。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">9</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">手机折痕 柔性电子</a>
+            <div class="dmeta"><span class="dtag" style="color:#ef4444">避坑⚠️</span>想买折叠屏的先知道折痕躲不掉，介意的话就别花这个钱。</div>
+          </div>
+        </div>
+        <div class="ditem">
+          <div class="dno">10</div>
+          <div class="dmain">
+            <a class="dtitle" href="daily/2026-09-10.html">8 月新能源车零售 100.5 万辆，同比下降 10.1%，燃油车零售 54 万辆，同比下降 40%，如何解读？</a>
+            <div class="dmeta"><span class="dtag" style="color:#eab308">省💰</span>想买车的可以再等等，销量跌了，后面优惠可能更大。</div>
+          </div>
+        </div>
+        <!--DAILY_LIST_END-->
       </div>
-      <p style="text-align:center;margin-top:26px"><a class="card-link" href="daily/2026-08-24.html">查看完整日报（10 条）→</a></p>
+      <p style="text-align:center;margin-top:22px"><a class="card-link" href="daily/2026-09-10.html">查看完整日报（10 条）→</a></p>
     </div>
   </section>
 

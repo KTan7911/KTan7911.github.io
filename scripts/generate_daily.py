@@ -256,45 +256,48 @@ def fmt_read(n):
 
 def render_html(items, notes, date_str, balance):
     today_cn = datetime.date.today().strftime("%Y年%m月%d日")
-    cards = []
+    rows = []
     for i, (it, note) in enumerate(zip(items, notes), 1):
         tag = note.get("tag", "科普📖")
         color = TAG_COLORS.get(tag, "#94a3b8")
-        cards.append(f"""
-    <article class="card">
-      <p class="tag"><span style="color:{color}">{tag}</span></p>
-      <a class="t" href="{html.escape(it['content_url'])}" target="_blank" rel="noopener">
-        <span class="no">{i}</span> {html.escape(it['title'])}
-      </a>
-      <p class="src">📰 {html.escape(it.get('nickname',''))} · 👀 {fmt_read(it.get('read_num',0))} · 🔁 {it.get('share_num',0)}</p>
-      {f'<p class="sum">📌 {html.escape(note.get("summary",""))}</p>' if note.get('summary') else ''}
-      {f'<p class="why">💡 {html.escape(note.get("why",""))}</p>' if note.get('why') else ''}
-    </article>""")
+        why = (note.get("why", "") or "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        rows.append(f"""
+    <div class="item">
+      <div class="no">{i}</div>
+      <div class="body">
+        <a class="t" href="{html.escape(it['content_url'])}" target="_blank" rel="noopener">{html.escape(it['title'])}</a>
+        <div class="why">{html.escape(why)}</div>
+        <div class="meta"><span class="tag" style="color:{color}">{tag}</span>📰 {html.escape(it.get('nickname',''))} · 🔥 {fmt_read(it.get('read_num',0))}</div>
+      </div>
+    </div>""")
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>生活科技日报 {date_str} - 今天跟你有关系的 10 条科技信息</title>
-<meta name="description" content="每日 10 条贴近生活的科技信息：省钱、避坑、提效、护隐私，附大白话点评。">
+<meta name="description" content="每日 10 条贴近生活的科技信息：省钱、避坑、提效、护隐私，每条一句「对你有啥用」。">
 <style>
   body{{margin:0;background:#0f172a;color:#e2e8f0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}}
   .wrap{{max-width:720px;margin:0 auto;padding:20px 16px 40px}}
-  header{{text-align:center;padding:28px 0 8px}}
+  header{{text-align:center;padding:28px 0 14px}}
   header h1{{margin:0;font-size:22px;letter-spacing:1px}}
   header p{{color:#94a3b8;font-size:13px;margin:6px 0 0}}
-  .card{{background:#1e293b;border-radius:12px;padding:14px 16px;margin:14px 0}}
-  .tag{{margin:0;font-size:13px;font-weight:700}}
-  .t{{color:#60a5fa;text-decoration:none;font-size:16px;font-weight:600;display:block;margin-top:2px}}
-  .t:hover{{text-decoration:underline}}
-  .no{{display:inline-block;background:#60a5fa;color:#0f172a;border-radius:6px;padding:0 7px;font-size:13px;font-weight:700;margin-right:6px}}
-  .src{{color:#94a3b8;font-size:12px;margin:6px 0 0}}
-  .sum{{margin:8px 0 0;font-size:14px}}
-  .why{{margin:4px 0 0;font-size:14px;color:#fbbf24}}
+  .list{{background:#1e293b;border-radius:14px;padding:4px 18px;margin-top:6px}}
+  .item{{display:flex;gap:14px;padding:16px 0;border-top:1px solid #334155;align-items:flex-start}}
+  .item:first-child{{border-top:none}}
+  .no{{flex:0 0 24px;height:24px;line-height:24px;text-align:center;background:#60a5fa;color:#0f172a;border-radius:7px;font-size:13px;font-weight:700;margin-top:2px}}
+  .body{{flex:1;min-width:0}}
+  .t{{color:#e2e8f0;text-decoration:none;font-size:16px;font-weight:600;display:block}}
+  .t:hover{{color:#60a5fa}}
+  .why{{margin:5px 0 0;font-size:14px;color:#fbbf24}}
+  .meta{{margin:6px 0 0;font-size:12px;color:#94a3b8}}
+  .tag{{display:inline-block;font-weight:700;margin-right:8px}}
   .follow{{text-align:center;background:#1e293b;border-radius:12px;padding:18px;margin-top:26px}}
   .follow b{{color:#60a5fa}}
   footer{{text-align:center;color:#64748b;font-size:12px;margin-top:22px}}
   a.back{{color:#94a3b8;font-size:13px;text-decoration:none}}
+  @media(max-width:560px){{.list{{padding:2px 12px}}.t{{font-size:15px}}}}
 </style>
 </head>
 <body>
@@ -303,43 +306,47 @@ def render_html(items, notes, date_str, balance):
     <h1>📡 KTcove 生活科技日报</h1>
     <p>{today_cn} · 今天跟你有关系的 {len(items)} 条科技信息</p>
   </header>
-  {''.join(cards)}
+  <div class="list">{''.join(rows)}
+  </div>
   <div class="follow">
     <p><b>每天 17:40 自动推送</b>，关注公众号「KTCOVE宝藏小站」不迷路</p>
     <p style="color:#94a3b8;font-size:13px"><a class="back" href="https://www.ktcove.com/daily/">查看历史日报 →</a> · 完整评测与工具推荐，公众号回复「目录」</p>
   </div>
-  <footer><a class="back" href="https://www.ktcove.com/">← 返回首页 KTcove 寻宝人</a> · 余额 {balance}</footer>
+  <footer><a class="back" href="https://www.ktcove.com/">← 返回首页 KTcove 寻宝人</a></footer>
 </div>
 </body>
 </html>"""
 
-GRID_START = "<!--DAILY_GRID_START-->"
-GRID_END = "<!--DAILY_GRID_END-->"
+GRID_START = "<!--DAILY_LIST_START-->"
+GRID_END = "<!--DAILY_LIST_END-->"
 
 def update_index(daily_path, today_items, notes):
-    """更新首页 #daily 板块的 Top3 卡片（含 tag 徽标）。
+    """更新首页 #daily 板块为「10 条清单」布局（标题 + 一句点评）。
 
-    用锚点注释精确替换卡片区，避免旧版靠 find('</div>') 误伤卡片内部 div 导致的 HTML 破坏。
+    用锚点注释精确替换列表区，避免旧版靠 find('</div>') 误伤卡片内部 div 导致的 HTML 破坏。
     """
     idx = os.path.join(SITE, "index.html")
     with open(idx, encoding="utf-8") as f: src = f.read()
     gs = src.find(GRID_START)
     ge = src.find(GRID_END)
     if gs == -1 or ge == -1 or ge < gs:
-        print("[warn] 首页缺少 DAILY_GRID 锚点，跳过首页更新（请先运行 fix_daily_section.py）")
+        print("[warn] 首页缺少 DAILY_LIST 锚点，跳过首页更新（请先运行 fix_daily_section.py）")
         return
-    cards = []
-    for it, note in zip(today_items[:3], notes[:3]):
+    rows = []
+    for i, (it, note) in enumerate(zip(today_items, notes), 1):
         tag = note.get("tag", "科普📖")
         color = TAG_COLORS.get(tag, "#94a3b8")
-        why = note.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "")[:46]
-        cards.append(f'''<a class="card project-card" href="{daily_path}">
-          <div class="card-icon">📰</div>
-          <h3>{html.escape(it["title"])}</h3>
-          <p>📰 {html.escape(it.get("nickname",""))} · <span style="color:{color}">{tag}</span> · {html.escape(why)}</p>
-          <span class="card-link">查看全文 →</span>
-        </a>''')
-    block = GRID_START + "\n        " + "\n        ".join(cards) + "\n        " + GRID_END
+        why = note.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "").strip()
+        rows.append(
+            f'        <div class="ditem">\n'
+            f'          <div class="dno">{i}</div>\n'
+            f'          <div class="dmain">\n'
+            f'            <a class="dtitle" href="{daily_path}">{html.escape(it["title"])}</a>\n'
+            f'            <div class="dmeta"><span class="dtag" style="color:{color}">{html.escape(tag)}</span>{html.escape(why)}</div>\n'
+            f'          </div>\n'
+            f'        </div>'
+        )
+    block = GRID_START + "\n" + "\n".join(rows) + "\n        " + GRID_END
     src = src[:gs] + block + src[ge + len(GRID_END):]
     with open(idx, "w", encoding="utf-8") as f: f.write(src)
 
