@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fdfaf6">
+<meta name="robots" content="noindex,nofollow">
+<title>小屋</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ 启动加载 ============ -->
+<div class="boot" id="boot">
+  <div class="bwrap">
+    <div class="blogo">🏠</div>
+    <div class="btxt">小屋</div>
+    <div class="bspin"></div>
+  </div>
+</div>
+
+<!-- ============ 登录页 ============ -->
+<div class="authpage hidden" id="authpage">
+  <div class="authbox">
+    <div class="logo">🏠</div>
+    <div class="title">小屋</div>
+    <div class="slogan">只有你自己看得见 🌿</div>
+
+    <div class="authtabs">
+      <button data-m="login" class="on">登入</button>
+      <button data-m="register">注册</button>
+    </div>
+
+    <div class="authform">
+      <div class="frow">
+        <label>邮箱</label>
+        <input type="email" id="emailInput" class="field" placeholder="你的邮箱" autocomplete="username">
+      </div>
+      <div class="frow">
+        <label>密码</label>
+        <input type="password" id="pwdInput" class="field" placeholder="至少 6 位" autocomplete="current-password">
+      </div>
+      <div class="frow hidden" id="confirmRow">
+        <label>再输一次密码</label>
+        <input type="password" id="pwdInput2" class="field" placeholder="确认密码" autocomplete="new-password">
+      </div>
+
+      <button class="btn btn-primary" id="authSubmit" style="margin-top:8px">进入小屋</button>
+      <div class="authmsg" id="authMsg"></div>
+    </div>
+
+    <div class="authfoot">
+      所有记录只属于你，别人看不到<br>
+      数据加密存储，写下去就不可修改 🌱
+    </div>
+  </div>
+</div>
+
+<!-- ============ 主应用 ============ -->
+<div class="app hidden" id="app">
+
+  <!-- 顶部 -->
+  <div class="top">
+    <div class="avatar">🏠</div>
+    <div class="tinfo">
+      <div class="t1">我的小屋</div>
+      <div class="t2" id="topSub">只有你自己看得见 🌿</div>
+    </div>
+    <div class="tright">
+      <div class="tbtn" id="openHole" title="我的树洞">📜</div>
+      <div class="tbtn" id="logoutBtn" title="退出">⚙️</div>
+    </div>
+  </div>
+
+  <!-- 聊天流 -->
+  <div class="stream" id="stream"></div>
+
+  <!-- 输入区 -->
+  <div class="composer">
+    <div class="moodstrip" id="moodstrip"></div>
+
+    <div class="recbanner" id="recBanner">
+      <span class="rb-w"><i></i><i></i><i></i><i></i><i></i></span>
+      <span class="rb-t" id="recBannerTxt">正在听你说…</span>
+    </div>
+
+    <div class="inputbar">
+      <button class="circlebtn togglekey" id="toggleKey" title="切换输入方式">🎤</button>
+      <div class="inputwrap" id="inputWrap">
+        <textarea id="msgInput" rows="1" placeholder="说点什么…"></textarea>
+      </div>
+      <button class="holdtalk hidden" id="holdTalk">按住 说话</button>
+      <button class="circlebtn send" id="sendBtn" disabled>➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 树洞页 ============ -->
+<div class="page hidden" id="holepage">
+  <div class="pagehead">
+    <div class="tbtn" id="closeHole">←</div>
+    <div class="ptitle">我的树洞</div>
+  </div>
+  <div class="pagebody">
+    <div class="filters" id="holeFilters"></div>
+    <div id="holeList"></div>
+  </div>
+</div>
+
+<!-- ============ Toast ============ -->
+<div class="toast" id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
