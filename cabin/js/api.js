@@ -100,24 +100,25 @@ const SB = (() => {
   /* ---------- Database (PostgREST) ---------- */
   async function db(table) {
     const base = U + '/rest/v1/' + table;
-    const q = { select: null, filters: [], order: null, limit: null };
+    // 用 _q 避免字段名与方法名冲突
+    const _q = { select: null, filters: [], order: null, limit: null };
 
     const builder = {
-      select(cols) { q.select = cols || '*'; return builder; },
-      eq(col, val) { q.filters.push(col + '=eq.' + encodeURIComponent(val)); return builder; },
+      select(cols) { _q.select = cols || '*'; return builder; },
+      eq(col, val) { _q.filters.push(col + '=eq.' + encodeURIComponent(val)); return builder; },
       order(col, opts) {
         const dir = (opts && opts.ascending === false) ? 'desc' : 'asc';
-        q.order = col + '.' + dir;
+        _q.order = col + '.' + dir;
         return builder;
       },
-      limit(n) { q.limit = n; return builder; },
+      limit(n) { _q.limit = n; return builder; },
 
       async get() {
         const params = [];
-        if (q.select) params.push('select=' + q.select);
-        q.filters.forEach(f => params.push(f));
-        if (q.order)  params.push('order=' + q.order);
-        if (q.limit)  params.push('limit=' + q.limit);
+        if (_q.select) params.push('select=' + _q.select);
+        _q.filters.forEach(f => params.push(f));
+        if (_q.order)  params.push('order=' + _q.order);
+        if (_q.limit)  params.push('limit=' + _q.limit);
         const url = base + (params.length ? '?' + params.join('&') : '');
         const res = await fetch(url, { headers: headers() });
         return parse(res);
@@ -133,7 +134,7 @@ const SB = (() => {
       },
 
       async update(patch) {
-        const params = q.filters.length ? '?' + q.filters.join('&') : '';
+        const params = _q.filters.length ? '?' + _q.filters.join('&') : '';
         const res = await fetch(base + params, {
           method: 'PATCH',
           headers: headers({ 'Prefer': 'return=representation' }),
@@ -143,7 +144,7 @@ const SB = (() => {
       },
 
       async remove() {
-        const params = q.filters.length ? '?' + q.filters.join('&') : '';
+        const params = _q.filters.length ? '?' + _q.filters.join('&') : '';
         const res = await fetch(base + params, {
           method: 'DELETE',
           headers: headers({ 'Prefer': 'return=representation' })
