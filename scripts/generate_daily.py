@@ -144,19 +144,83 @@ def life_score(item):
 def keep(item):
     title = item.get("title", "")
     if any(k in title for k in BLACK_KW): return False
+    if item.get("_channel"):                 # 热榜条目：单独用宽松规则
+        return keep_hot(item)
     s = life_score(item)
     if s >= 2: return True                     # 明显生活向
     if item.get("nickname", "") in WHITELIST and s >= 0: return True  # 科技媒体且不扣分
     return item.get("nickname", "") in LIFE_ACCOUNTS
 
+# ---- 热榜专用过滤 ----
+# 硬噪声：直接剔除（悲剧/政治军事/体育赛事/娱乐八卦/讣告等，与生活科技无关）
+HOT_BLACK = ["遇难","身亡","死亡","去世","逝世","讣告","悼念","报警","刑拘","被抓",
+  "酒驾","诈骗","缅北","坠亡","跳楼","车祸","碰撞","火灾","爆炸",
+  "战争","导弹","军演","冲突","制裁","外交","特朗普","普京","以色列","哈马斯",
+  "女篮","男篮","国足","中超","英超","NBA","世界杯","奥运","金牌","夺冠","止步","无缘",
+  "欧冠","联赛","球队","球迷","进球","停赛","乒乓","乒乓","运动员",
+  "音乐节","演唱会","综艺","花少","明星","艺人","剧组","剧透","票房","热播",
+  "恋情","出轨","离婚","结婚","婚礼","生子","怀孕","恋爱","分手","复婚",
+  "梅姨","凶手","嫌犯","案","暴发","疫情","病毒","地震","台风","暴雨","洪水"]
+# 生活/科技相关提升词（命中任一即纳入）
+HOT_GOOD = ["手机","苹果","iPhone","安卓","华为","小米","折叠","屏幕","充电","电池","芯片","处理器",
+  "电脑","笔记本","平板","耳机","手表","WiFi","网络","宽带","流量","套餐","5G","6G",
+  "App","软件","应用","系统","升级","更新","下载","安装","清理","备份","数据","隐私",
+  "AI","人工智能","大模型","机器人","GPT","算法","智能",
+  "健康","睡眠","视力","减肥","瘦","饮食","运动","跑步","走路","养生","医生","体检",
+  "涨","降","降价","优惠","免费","省钱","折扣","价格","块钱","元",
+  "技巧","教程","攻略","方法","妙招","科普","揭秘","避坑","提醒","注意","建议",
+  "家","冰箱","空调","洗衣机","厨","清洁","收纳","家电","出行","旅行","驾驶","车",
+  "学生","学习","老师","教育","考试","高考","大学","考研","考公",
+  "就业","招聘","职场","打工","工资","养老金","退休","医保","社保"]
+
+def keep_hot(item):
+    """热榜条目过滤：先剔除硬噪声，再要求命中生活/科技关键词。"""
+    t = item.get("title", "")
+    if any(k in t for k in HOT_BLACK):
+        return False
+    if any(k in t for k in LIFE_KW) or any(k in t for k in HOT_GOOD):
+        return True
+    return False
+
+def hot_score(item):
+    """热榜条目排序分：相关性 + 热度。强科技/消费话题加权。"""
+    t = item.get("title", "")
+    s = 0
+    for kw in HOT_GOOD:
+        if kw in t: s += 2
+    # 强消费科技词额外加权，优先上日报
+    STRONG = ["手机","iPhone","苹果","华为","小米","折叠","降价","价格","便宜","省钱","免费",
+              "App","软件","AI","人工智能","机器人","健康","睡眠","减肥","技巧","教程","攻略"]
+    for kw in STRONG:
+        if kw in t: s += 3
+    return s
+
 def dedupe(items):
-    seen, out = {}, []
+    """去重：微信源每个公众号最多 2 条；热榜源不限单平台数（避免单平台霸屏，但不卡太死）。"""
+    seen, hot_seen, out = {}, {}, []
     for it in items:
-        nick = it.get("nickname", "")
-        if seen.get(nick, 0) >= 2: continue
-        seen[nick] = seen.get(nick, 0) + 1
-        out.append(it)
-    return out
+        if it.get("_channel"):
+            # 热榜：每个平台最多 4 条
+            ch = it["_channel"]
+            if hot_seen.get(ch, 0) >= 4:
+                continue
+            hot_seen[ch] = hot_seen.get(ch, 0) + 1
+            out.append(it)
+        else:
+            nick = it.get("nickname", "")
+            if seen.get(nick, 0) >= 2:
+                continue
+            seen[nick] = seen.get(nick, 0) + 1
+            out.append(it)
+    # 标题去重
+    tseen, uniq = set(), []
+    for it in out:
+        t = it.get("title", "")
+        if t in tseen:
+            continue
+        tseen.add(t)
+        uniq.append(it)
+    return uniq
 
 def summarize(items):
     if not DS_KEY:
@@ -468,16 +532,20 @@ def main():
     all_items, balance = collect_items(token)
     print(f"[info] 共采集 {len(all_items)} 条原始条目，余额 {balance}")
     today = datetime.date.today().isoformat()
-    items = [it for it in all_items if str(it.get("published_at", "")).startswith(today)]
-    if len(items) < 5:
-        print(f"[warn] 今天匹配 {len(items)} 条，回退使用最近数据（共 {len(all_items)} 条）")
-        items = all_items
+    # 微信源带 published_at，热榜源不带：分开处理。
+    wx_dated = [it for it in all_items if not it.get("_channel") and str(it.get("published_at", "")).startswith(today)]
+    hot_items = [it for it in all_items if it.get("_channel")]
+    if not wx_dated:
+        # 微信当日无数据时，退回全部微信条目（避免空）
+        wx_dated = [it for it in all_items if not it.get("_channel")]
+    items = wx_dated + hot_items
+    print(f"[info] 当日微信 {len(wx_dated)} 条 + 热榜 {len(hot_items)} 条")
     items = [it for it in items if keep(it)]
     if len(items) < 5:
         print(f"[warn] 生活化过滤后仅 {len(items)} 条，放宽为按热度取（剔除黑名单词后）") 
         items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
-    items.sort(key=lambda x: (life_score(x), x.get("read_num", 0)), reverse=True)
+    items.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
     items = items[:TOP_N]
     if len(items) < 5:
         print(f"[warn] 有效文章仅 {len(items)} 条，检查过滤规则")
