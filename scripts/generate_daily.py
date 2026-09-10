@@ -85,6 +85,51 @@ def fetch_hot(token):
                   data={"category": CATEGORY, "read_num": 10000})
     return r.get("data", {}).get("items", []), r.get("balance")
 
+# 热榜渠道（cimi-data get_hot_ranking 接口）
+HOT_CHANNELS = {1: "微博", 2: "知乎", 3: "百度", 4: "抖音", 5: "头条"}
+
+def fetch_hot_ranking(token, channel_id):
+    """拉取单一热榜渠道的条目，统一成 wx-hot 相同的 item 结构。
+
+    接口：GET /api/v3/hotrank?access_token=..&channel_id=N
+    返回 list[{title, nickname(=平台名), read_num(=热度), share_num, content_url, _channel}]。
+    接口异常时返回空列表，不影响主流程。
+    """
+    try:
+        r = http_json(f"{HOST}/api/v3/hotrank", method="GET",
+                      params={"access_token": token, "channel_id": channel_id})
+    except Exception as e:
+        print(f"[warn] 热榜渠道 {HOT_CHANNELS.get(channel_id, channel_id)} 拉取失败：{e}")
+        return []
+    d = r.get("data")
+    if isinstance(d, dict):
+        items = d.get("items") or d.get("list") or []
+    elif isinstance(d, list):
+        items = d
+    else:
+        items = []
+    out = []
+    for it in items:
+        if isinstance(it, str):
+            it = {"title": it}
+        title = it.get("title") or it.get("word") or it.get("name") or it.get("keyword") or ""
+        if not title:
+            continue
+        hot = it.get("hot") or it.get("hot_value") or it.get("read_num") or it.get("num") or it.get("rank") or 0
+        try:
+            hot = int(hot)
+        except Exception:
+            hot = 0
+        out.append({
+            "title": title,
+            "nickname": HOT_CHANNELS.get(channel_id, f"渠道{channel_id}"),
+            "read_num": hot,
+            "share_num": 0,
+            "content_url": it.get("url") or it.get("link") or f"https://www.baidu.com/s?wd={urllib.parse.quote(title)}",
+            "_channel": HOT_CHANNELS.get(channel_id, str(channel_id)),
+        })
+    return out
+
 def life_score(item):
     """生活化评分：命中生活词 +2/个，命中高大上词 -3/个，生活类账号 +2。"""
     t = item.get("title", "")
@@ -118,7 +163,8 @@ def summarize(items):
         return [{"title": it["title"], "summary": "", "why": "", "tag": "科普📖"} for it in items]
     lines = "\n".join(f"{i+1}. {it['title']}（{it.get('nickname','')}，阅读 {it.get('read_num',0)}）"
                       for i, it in enumerate(items))
-    prompt = ("你是生活科技编辑，读者是普通消费者（学生、打工人、家里长辈）。对下面每条新闻写三样："
+    prompt = ("你是生活科技编辑，读者是普通消费者（学生、打工人、家里长辈）。下面是一些来自微信热文、微博/知乎/百度/抖音热搜的条目。"
+              "从中挑选并对每条写三样："
               "1)summary：一句话人话概括（40字内，别用术语）；2)why：对普通人的实际用处——能不能省钱、避坑、"
               "省时间、保护隐私或健康？用大白话写（50字内），开头直接说\"对你的用处：\"；"
               "3)tag：从 省💰/避坑⚠️/提效⚡/隐私🔒/健康❤️/科普📖 中选最贴切的一个。"
@@ -203,29 +249,34 @@ def render_html(items, notes, date_str, balance):
 </body>
 </html>"""
 
+GRID_START = "<!--DAILY_GRID_START-->"
+GRID_END = "<!--DAILY_GRID_END-->"
+
 def update_index(daily_path, today_items, notes):
-    """更新首页 #daily 板块的 Top3 卡片（含 tag 徽标）。"""
+    """更新首页 #daily 板块的 Top3 卡片（含 tag 徽标）。
+
+    用锚点注释精确替换卡片区，避免旧版靠 find('</div>') 误伤卡片内部 div 导致的 HTML 破坏。
+    """
     idx = os.path.join(SITE, "index.html")
     with open(idx, encoding="utf-8") as f: src = f.read()
-    start = src.find('id="daily"')
-    if start == -1:
-        print("[warn] 首页没有 #daily 板块，跳过首页更新")
+    gs = src.find(GRID_START)
+    ge = src.find(GRID_END)
+    if gs == -1 or ge == -1 or ge < gs:
+        print("[warn] 首页缺少 DAILY_GRID 锚点，跳过首页更新（请先运行 fix_daily_section.py）")
         return
-    grid_start = src.find('<div class="grid">', start)
-    grid_end = src.find('</div>', grid_start)
     cards = []
     for it, note in zip(today_items[:3], notes[:3]):
         tag = note.get("tag", "科普📖")
         color = TAG_COLORS.get(tag, "#94a3b8")
-        why = note.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "")[:40]
+        why = note.get("why", "").replace("对你的用处：", "").replace("对你的用处:", "")[:46]
         cards.append(f'''<a class="card project-card" href="{daily_path}">
-  <div class="card-icon">📰</div>
-  <h3>{html.escape(it["title"])}</h3>
-  <p>📰 {html.escape(it.get("nickname",""))} · <span style="color:{color}">{tag}</span> · {html.escape(why)}</p>
-  <span class="card-link">查看全文 →</span>
-</a>''')
-    new_grid = '<div class="grid">\n        ' + "\n        ".join(cards) + "\n      "
-    src = src[:grid_start] + new_grid + src[grid_end:]
+          <div class="card-icon">📰</div>
+          <h3>{html.escape(it["title"])}</h3>
+          <p>📰 {html.escape(it.get("nickname",""))} · <span style="color:{color}">{tag}</span> · {html.escape(why)}</p>
+          <span class="card-link">查看全文 →</span>
+        </a>''')
+    block = GRID_START + "\n        " + "\n        ".join(cards) + "\n        " + GRID_END
+    src = src[:gs] + block + src[ge + len(GRID_END):]
     with open(idx, "w", encoding="utf-8") as f: f.write(src)
 
 def compute_hot_words(items, notes):
@@ -381,10 +432,41 @@ def update_sitemap(daily_url):
     src = src.replace("</urlset>", entry + "\n</urlset>", 1)
     with open(sp, "w", encoding="utf-8") as f: f.write(src)
 
+def collect_items(token):
+    """多源采集：微信爆款（keji+caijing）+ 热榜（微博/知乎/百度/抖音/头条）。
+
+    返回 (all_items, balance)。任一源失败不影响其它源。
+    """
+    all_items, balance = [], None
+    # 1) 微信爆款（科技类，不足时补财经）
+    try:
+        wx_items, balance = fetch_hot(token)
+        all_items.extend(wx_items)
+        print(f"[info] 微信科技类 {len(wx_items)} 条")
+        if len(wx_items) < 20:
+            global CATEGORY
+            old = CATEGORY
+            CATEGORY = "caijing"
+            try:
+                cj_items, balance = fetch_hot(token)
+                all_items.extend(cj_items)
+                print(f"[info] 微信财经类补充 {len(cj_items)} 条")
+            finally:
+                CATEGORY = old
+    except Exception as e:
+        print(f"[warn] 微信爆款拉取失败：{e}")
+    # 2) 热榜五渠道
+    for cid in HOT_CHANNELS:
+        rk = fetch_hot_ranking(token, cid)
+        all_items.extend(rk)
+        print(f"[info] 热榜 {HOT_CHANNELS[cid]} {len(rk)} 条")
+    return all_items, balance
+
 def main():
     date_str = datetime.date.today().isoformat()
     token = get_token()
-    all_items, balance = fetch_hot(token)
+    all_items, balance = collect_items(token)
+    print(f"[info] 共采集 {len(all_items)} 条原始条目，余额 {balance}")
     today = datetime.date.today().isoformat()
     items = [it for it in all_items if str(it.get("published_at", "")).startswith(today)]
     if len(items) < 5:
@@ -392,13 +474,17 @@ def main():
         items = all_items
     items = [it for it in items if keep(it)]
     if len(items) < 5:
-        print(f"[warn] 生活化过滤后仅 {len(items)} 条，放宽为按阅读量取（剔除黑名单词后）")
+        print(f"[warn] 生活化过滤后仅 {len(items)} 条，放宽为按热度取（剔除黑名单词后）") 
         items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
     items.sort(key=lambda x: (life_score(x), x.get("read_num", 0)), reverse=True)
     items = items[:TOP_N]
     if len(items) < 5:
         print(f"[warn] 有效文章仅 {len(items)} 条，检查过滤规则")
+    if not items:
+        print("[err] 本次采集/过滤后无有效条目，跳过本次生成（常见原因：cimi-data 余额不足 6020 或接口异常）。")
+        print("[err] 未生成任何文件，不提交，等待下次运行。")
+        return
     notes = summarize(items)
     if len(notes) != len(items):
         notes = [{"title": it["title"], "summary": "", "why": "", "tag": "科普📖"} for it in items]
