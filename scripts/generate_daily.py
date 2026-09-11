@@ -255,12 +255,21 @@ def summarize(items):
         "对每条输出 6 个字段：\n"
         "1)title：标题（15-25字，带钩子，不夸大）；\n"
         "2)direction：从 省钱/避坑/提效/护隐私 中选最贴切的一个；\n"
-        "3)pain：核心痛点（1句话）；\n"
-        "4)angle：文章切入点（2-3句，说清讲什么、怎么讲）；\n"
+        "3)pain：核心痛点（1句话）——用大白话说出读者遇到这事时的真实困境或纠结，"
+        "要让人一看就觉得\"说的就是我\"，别用行业黑话；\n"
+        "4)angle：这一步是全文最重要的部分，不要写\"文章切入点\"这种编辑术语，"
+        "而是要写给读者看的\"这件事到底怎么回事 + 你该怎么办\"，具体要求：\n"
+        "   （a）先把事情用一句最简单的话解释清楚（为什么会这样、背后是什么原理或套路），"
+        "读者看完能\"哦，原来是这么回事\"；\n"
+        "   （b）再给出 2-3 条具体、能照着做的做法（比如点哪个设置、去哪查、跟对方怎么说、"
+        "什么情况下该做什么选择），要具体到动作，不要泛泛说\"要注意\"\"要谨慎\"；\n"
+        "   （c）语言平实口语化，像朋友在饭桌上给你讲明白，不用术语，不喊口号，总长 60-90 字；\n"
         "5)keywords：关键词标签（3-5个，字符串数组）；\n"
-        "6)review：深度评价（30字左右）——点出这篇文章\"真正解决了什么\"而非复述标题，可有一点反差或提醒，"
-        "像朋友推荐不像广告文案；允许指出局限性；禁止夸大（不用震惊/必看/史上最全/彻底/绝对），"
-        "禁止编造数据、案例、专家名、机构名。\n"
+        "6)review：我的观点（30-45字）——要有人味、有温度，像朋友替你想了一步。"
+        "口吻可以带点共情（比如\"这事确实挺烦的\"\"换谁都得犹豫\"），也可以温柔地提醒一句，"
+        "但不要煽情、不要说教、不要用\"值得注意的是\"这类书面语，也不要点评文章本身写得好不好。"
+        "重点是帮读者卸下一点情绪负担，或者给他一个安心的角度。\n"
+        "禁止夸大（不用震惊/必看/史上最全/彻底/绝对），禁止编造数据、案例、专家名、机构名。\n"
         "严格按 JSON 数组输出，不要其他文字："
         '[{"title":"...","direction":"省钱","pain":"...","angle":"...","keywords":["..."],"review":"..."}]\n'
         "注意：四个方向尽量均衡，优先覆盖 省钱/避坑/提效/护隐私 各至少 2 条。\n\n"
@@ -343,10 +352,10 @@ def render_html(items, notes, date_str, balance):
         <span class="src">📰 {html.escape(it.get('nickname',''))}</span>
       </div>
       <a class="t" href="{html.escape(it['content_url'])}" target="_blank" rel="noopener">{html.escape(note.get('title') or it['title'])}</a>
-      {f'<div class="fld"><b>痛点</b>{html.escape(note.get("pain",""))}</div>' if note.get('pain') else ''}
-      {f'<div class="fld"><b>切入点</b>{html.escape(note.get("angle",""))}</div>' if note.get('angle') else ''}
+      {f'<div class="fld"><b>怎么回事</b>{html.escape(note.get("pain",""))}</div>' if note.get('pain') else ''}
+      {f'<div class="fld"><b>怎么办</b>{html.escape(note.get("angle",""))}</div>' if note.get('angle') else ''}
       {f'<div class="kws">{kw_html}</div>' if kw_html else ''}
-      {f'<div class="review">💬 {html.escape(note.get("review",""))}</div>' if note.get('review') else ''}
+      {f'<div class="review">💬 我的观点：{html.escape(note.get("review",""))}</div>' if note.get('review') else ''}
     </div>""")
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
