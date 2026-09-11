@@ -31,8 +31,8 @@ CATEGORY = "keji"
 # 微信爆款分类（多分类拉取，加宽软件/工具类内容来源）
 WX_CATEGORIES = ["keji", "caijing"]
 TOP_N    = 10
-MIN_ITEMS = 3      # 最少条目（少而精）
-MAX_ITEMS = 10     # 最多条目
+MIN_ITEMS = 3      # 固定条数（少而精）
+MAX_ITEMS = 3      # 固定条数
 DAILY_URL_PREFIX = "https://www.ktcove.com/daily/"
 
 # ---- 软件/工具/技巧导向过滤规则 v3 ----
@@ -160,6 +160,17 @@ TARGET_ACCOUNTS = [
     "电手",        # 数码技巧
     "差评",        # 数码评测
     "数字尾巴",    # 数码生活
+    # 纯软件推荐号（搜一搜验证过，高频更新）
+    "木子淇",      # 神仙App推荐，更新频率极高
+    "效率君",      # 五星好评软件推荐
+    "软件资源局",  # 宝藏APP
+    "软件大侠",    # 本命软件分享
+    "京灵智创",    # 免费实用软件
+]
+# 搜索关键词：用于发现漏网的高质量软件文章
+SEARCH_KEYWORDS = [
+    "软件推荐", "App推荐", "效率工具", "电脑技巧",
+    "隐藏功能", "开源软件", "免费软件",
 ]
 
 def fetch_account(token, name):
@@ -428,7 +439,9 @@ def summarize(items):
         "4隐私安全（权限管理/数据安全/防骗防诈/广告弹窗/账号密码/卸载流氓软件）。"
         "❗重要：严格筛选，宁少勿滥。只写软件/工具/数码/技巧类内容。"
         "如果某条新闻跟这些完全无关（医疗健康、汽车、奢侈品、情感、房产、体育、娱乐八卦），"
-        "直接跳过不写。最终输出 3-10 条都行，质量比数量重要。\n"
+        "直接跳过不写。\n"
+        "【最终只输出 3 条】从候选里挑出 3 条最适合软件/工具/技巧受众的，"
+        "质量比数量重要，宁缺毋滥。\n"
         "对每条输出 6 个字段：\n"
         "1)title：标题（15-25字，带钩子，不夸大）；\n"
         "2)direction：从 新软件/实用工具/技巧攻略/隐私安全 中选最贴切的一个；\n"
@@ -449,7 +462,7 @@ def summarize(items):
         "禁止夸大（不用震惊/必看/史上最全/彻底/绝对），禁止编造数据、案例、专家名、机构名。\n"
         "严格按 JSON 数组输出，不要其他文字："
         '[{"title":"...","direction":"实用工具","pain":"...","angle":"...","keywords":["..."],"review":"..."}]\n'
-        "注意：四个方向尽量均衡，但以质量为先，不必强凑。\n\n"
+        "注意：三个方向尽量不同，优先从 新软件/实用工具/技巧攻略/隐私安全 中覆盖不同角度。\n\n"
         f"候选内容：\n{lines}")
     r = http_json("https://api.deepseek.com/chat/completions", method="POST",
                   headers={"Authorization": f"Bearer {DS_KEY}"},
@@ -486,7 +499,7 @@ def balance_by_direction(items, notes):
     for d in buckets:
         buckets[d].sort(key=score, reverse=True)
     picked, used = [], set()
-    # 质量门槛：候选不少时按配额取，候选少时全要
+    # 质量门槛：候选充足时按配额取
     total = len(scored)
     quota = DIR_QUOTA if total >= 8 else {d: 99 for d in DIRECTIONS}
     for d in DIRECTIONS:
