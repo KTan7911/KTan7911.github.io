@@ -167,11 +167,25 @@ TARGET_ACCOUNTS = [
     "软件大侠",    # 本命软件分享
     "京灵智创",    # 免费实用软件
 ]
-# 搜索关键词：用于发现漏网的高质量软件文章
+# 搜索关键词：用于发现往期高质量干货文章（不限日期）
 SEARCH_KEYWORDS = [
-    "软件推荐", "App推荐", "效率工具", "电脑技巧",
-    "隐藏功能", "开源软件", "免费软件",
+    "Windows 技巧",     # 电脑技巧
+    "软件推荐",         # 软件合集
+    "App推荐",          # 应用推荐
+    "效率工具",         # 效率工具
+    "隐藏功能",         # 隐藏功能
+    "开源软件",         # 开源
+    "电脑小技巧",       # 电脑技巧
+    "安卓技巧",         # 手机技巧
 ]
+
+# 「常青干货」特征词（标题命中则优先，因为这类不看时效、收藏价值高）
+EVERGREEN_KW = [
+    "收藏", "合集", "盘点", "个技巧", "个小技巧", "招", "必会", "必装", "必备",
+    "神器", "宝藏", "值得", "推荐", "好用", "效率翻倍", "干货", "一篇够", "够用",
+    "告别", "小白", "新手", "秘籍", "大全", "排行榜", "好用不火", "冷门",
+]
+
 
 def fetch_account(token, name):
     """定向拉取指定公众号的历史文章（天然精准，无需过滤）。"""
@@ -191,6 +205,45 @@ def fetch_account(token, name):
         it.setdefault("read_num", 0)
         it.setdefault("nickname", name)
     return items, r.get("balance")
+
+def fetch_search(token, keyword, page=1):
+    """微信搜一搜：按关键词搜集文章（不限日期，能捞到往期干货）。
+
+    返回的标题带 <em> 高亮标签，需清洗。
+    """
+    try:
+        r = http_json(f"{HOST}/api/v3/articles/search", method="POST",
+                      params={"access_token": token},
+                      data={"keyword": keyword, "page": page})
+    except Exception as e:
+        print(f"[warn] 搜索[{keyword}] 失败：{str(e)[:80]}")
+        return [], None
+    items = (r.get("data") or {}).get("items") or []
+    out = []
+    for it in items:
+        title = re.sub(r"<[^>]+>", "", it.get("title", "") or "")
+        if not title:
+            continue
+        out.append({
+            "title": title,
+            "nickname": it.get("nickname", ""),
+            "content_url": it.get("content_url", ""),
+            "published_at": it.get("published_at", ""),
+            "read_num": 0,
+            "_search": keyword,     # 标记来源搜索
+        })
+    return out, r.get("balance")
+
+def evergreen_score(item):
+    """往期干货评分：标题命中「常青」特征词加分。"""
+    t = item.get("title", "")
+    s = 0
+    for kw in EVERGREEN_KW:
+        if kw in t: s += 3
+    # 含数字（如「21个」「30个」）通常代表清单式干货
+    if re.search(r"\d+\s*[个招款种]", t):
+        s += 4
+    return s
 
 # 热榜渠道（cimi-data get_hot_ranking 接口）
 HOT_CHANNELS = {1: "微博", 2: "知乎", 3: "百度", 4: "抖音", 5: "头条"}
@@ -250,6 +303,11 @@ def life_score(item):
 
 def keep(item):
     title = item.get("title", "")
+    # 搜一搜来的：已是精准关键词结果，只要不中黑名单就放行
+    if item.get("_search"):
+        if any(k in title for k in BLACK_KW):
+            return False
+        return True
     if any(k in title for k in BLACK_KW): return False
     if item.get("_channel"):                 # 热榜条目：单独用宽松规则
         return keep_hot(item)
@@ -343,12 +401,15 @@ def keep_hot(item):
     return True
 
 def hot_score(item):
-    """排序分：定向公众号优先，其次强软件/数码/技巧关键词，硬件爆料降权。"""
+    """排序分：定向公众号 > 搜一搜干货 > 强关键词；硬件爆料降权。"""
     t = item.get("title", "")
     s = 0
-    # 定向公众号内容天然精准，基础分高
+    # 定向公众号内容天然精准
     if item.get("_mp"):
         s += 6
+    # 搜一搜来的往期干货：常青程度越高越优先
+    if item.get("_search"):
+        s += 4 + evergreen_score(item)
     for kw in HOT_GOOD:
         if kw in t: s += 2
     # 强相关词（主播核心内容）额外加权，优先上日报
@@ -375,6 +436,14 @@ def dedupe(items):
         if it.get("_mp"):
             # 定向公众号：每个号最多 3 条
             key = "mp:" + it["_mp"]
+            if seen.get(key, 0) >= 3:
+                continue
+            seen[key] = seen.get(key, 0) + 1
+            out.append(it)
+            continue
+        if it.get("_search"):
+            # 搜一搜：同关键词最多 3 条
+            key = "sk:" + it["_search"]
             if seen.get(key, 0) >= 3:
                 continue
             seen[key] = seen.get(key, 0) + 1
@@ -428,7 +497,7 @@ def summarize(items):
         return [{"title": it["title"], "direction": "技巧攻略", "pain": "", "angle": "",
                  "keywords": [], "review": ""} for it in items]
     lines = "\n".join(
-        f"{i+1}. [{it.get('_mp') or it.get('_channel') or it.get('nickname','')}] {it['title']}"
+        f"{i+1}. [{it.get('_mp') or it.get('_search') or it.get('_channel') or it.get('nickname','')}] {it['title']}"
         for i, it in enumerate(items))
     prompt = (
         "你是一名专注\"软件/工具/技巧\"分享的内容主编，读者是想学新东西、找好用的工具的人。"
@@ -440,7 +509,9 @@ def summarize(items):
         "❗重要：严格筛选，宁少勿滥。只写软件/工具/数码/技巧类内容。"
         "如果某条新闻跟这些完全无关（医疗健康、汽车、奢侈品、情感、房产、体育、娱乐八卦），"
         "直接跳过不写。\n"
-        "【最终只输出 3 条】从候选里挑出 3 条最适合软件/工具/技巧受众的，"
+        "【最终只输出 3 条】从候选里挑出 3 条最适合软件/工具/技巧受众的。"
+        "注意：候选中可能混有“往期干货”（经典文章），这类只要内容好、值得收藏，"
+        "跟新的内容一样可以选，不必因为是旧的就不用。\n"
         "质量比数量重要，宁缺毋滥。\n"
         "对每条输出 6 个字段：\n"
         "1)title：标题（15-25字，带钩子，不夸大）；\n"
@@ -490,7 +561,7 @@ def balance_by_direction(items, notes):
     scored = list(zip(items, notes))
     def score(pair):
         it = pair[0]
-        return hot_score(it) if it.get("_channel") else life_score(it)
+        return hot_score(it) if (it.get("_channel") or it.get("_search") or it.get("_mp")) else life_score(it)
     buckets = {d: [] for d in DIRECTIONS}
     for pair in scored:
         d = pair[1].get("direction")
@@ -825,6 +896,15 @@ def collect_items(token):
         rk = fetch_hot_ranking(token, cid)
         all_items.extend(rk)
         print(f"[info] 热榜 {HOT_CHANNELS[cid]} {len(rk)} 条")
+
+    # 3) 搜一搜：捞往期干货（不限日期）
+    for kw in SEARCH_KEYWORDS:
+        found, bal = fetch_search(token, kw)
+        if bal is not None:
+            balance = bal
+        all_items.extend(found)
+        print(f"[info] 搜索[{kw}] {len(found)} 条")
+
     return all_items, balance
 
 def main():
@@ -847,7 +927,7 @@ def main():
         print(f"[warn] 放宽为按热度取（仅剔除硬黑名单词）")
         items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
-    items.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
+    items.sort(key=lambda x: ((hot_score(x) if (x.get("_channel") or x.get("_search") or x.get("_mp")) else life_score(x)), x.get("read_num", 0)), reverse=True)
     # 方向感知预筛：每个方向至少保底若干条候选，保证 DeepSeek 有料可分
     def dir_of(it):
         t = it.get("title", "")
@@ -871,7 +951,7 @@ def main():
             break
         if id(it) not in picked_ids:
             pool.append(it); picked_ids.add(id(it))
-    pool.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
+    pool.sort(key=lambda x: ((hot_score(x) if (x.get("_channel") or x.get("_search") or x.get("_mp")) else life_score(x)), x.get("read_num", 0)), reverse=True)
     items = pool[:18]
     if len(items) < MIN_ITEMS:
         print(f"[warn] 候选不足 {MIN_ITEMS} 条，本次不生成（宁缺勿滥）")
