@@ -28,7 +28,11 @@ APP_SEC = os.environ.get("CIMI_APP_SECRET") or _creds.get("app_secret") or ""
 DS_KEY  = os.environ.get("DEEPSEEK_API_KEY") or _creds.get("ds_key") or ""
 SITE    = os.environ.get("SITE_DIR", ".")          # 本地测试设为 D:\DS_Harnees\MyWeb
 CATEGORY = "keji"
+# 微信爆款分类（多分类拉取，加宽软件/工具类内容来源）
+WX_CATEGORIES = ["keji", "caijing"]
 TOP_N    = 10
+MIN_ITEMS = 3      # 最少条目（少而精）
+MAX_ITEMS = 10     # 最多条目
 DAILY_URL_PREFIX = "https://www.ktcove.com/daily/"
 
 # ---- 软件/工具/技巧导向过滤规则 v3 ----
@@ -36,10 +40,20 @@ DAILY_URL_PREFIX = "https://www.ktcove.com/daily/"
 # 目标：只留「能装、能用、能学」的东西；剔除医疗、汽车、奢侈品、消费纠纷等无关话题
 
 # 优质来源账号（多为软件/数码/效率类）
-WHITELIST = ["爱范儿","少数派","虎嗅APP","量子位","机器之心","IT之家","差评",
-  "AppSo","科技每日推送","极客公园","新智元","数字尾巴","果壳","环球科学","电脑报",
-  "雷科技","电手","黑马公社","什么值得买","好物研究院","家电研究所","丁香生活研究所",
-  "手机中国","太平洋电脑网","中关村在线","微软科技"]
+WHITELIST = [
+  # 软件/效率/App
+  "少数派", "AppSo", "爱范儿", "电脑报", "IT之家", "微软科技", "Softpedia",
+  "效率工具指南", "MacTalk", "苏生不惑", "好用App推荐", "小众软件", "异次元软件世界",
+  "一沟祥云", "阮一峰的网络日志", "Linux中国", "开源中国", "GitHubDaily", "Python开发者",
+  # 数码/硬件/测评
+  "差评", "数字尾巴", "雷科技", "电手", "黑马公社", "手机中国", "锋潮评测",
+  "太平洋电脑网", "中关村在线", "科技美学", "小白测评", "WHYLAB", "IT之家",
+  # 科技媒体/大厂
+  "虎嗅APP", "量子位", "机器之心", "极客公园", "新智元", "环球科学", "果壳",
+  # 消费/生活科技
+  "什么值得买", "好物研究院", "家电研究所", "丁香生活研究所",
+  # 知识/学习
+  "得到", "知乎日报", "利维坦", "三联生活周刊", "看理想"]
 
 # 硬黑名单：标题命中直接剔除（跟软件/技巧完全无关的领域）
 BLACK_KW = [
@@ -98,9 +112,11 @@ FAR_KW = ["光刻机","大模型","芯片","财报","季度","融资","IPO","股
   "纳米","架构师","开发者","半导体","销量","同比","增长","破纪录","估值",
   "白皮书","峰会","论坛","人工智能大会","产业联盟","出海","全球化"]
 
-# 优质生活/软件类账号
-LIFE_ACCOUNTS = ["什么值得买","果壳","雷科技","电手","黑马公社","手机中国","好物研究院",
-  "家电研究所","丁香生活研究所","太平洋电脑网","中关村在线"]
+# 优质软件/效率/数码类账号（加分）
+LIFE_ACCOUNTS = ["少数派", "AppSo", "爱范儿", "IT之家", "电脑报", "电手", "黑马公社",
+  "小众软件", "异次元软件世界", "MacTalk", "苏生不惑", "效率工具指南", "少数派",
+  "雷科技", "锋潮评测", "科技美学", "小白测评", "WHYLAB", "差评", "数字尾巴",
+  "什么值得买", "果壳", "手机中国", "好物研究院", "家电研究所", "太平洋电脑网", "中关村在线"]
 TAG_COLORS = {"软件📦":"#eab308","工具🔧":"#22c55e","技巧💡":"#3b82f6","隐私🔒":"#ef4444","科普📖":"#94a3b8"}
 
 def http_json(url, method="GET", params=None, data=None, headers=None, timeout=30):
@@ -133,6 +149,37 @@ def fetch_hot(token):
                   params={"access_token": token},
                   data={"category": CATEGORY, "read_num": 10000})
     return r.get("data", {}).get("items", []), r.get("balance")
+
+# 定向公众号（软件/数码/效率类）——这是最精准的内容来源
+TARGET_ACCOUNTS = [
+    "少数派",      # 软件/效率/App 测评，质量最高
+    "AppSo",       # 应用推荐
+    "爱范儿",      # 数码科技
+    "IT之家",      # 科技资讯
+    "小众软件",    # 小众软件推荐
+    "电手",        # 数码技巧
+    "差评",        # 数码评测
+    "数字尾巴",    # 数码生活
+]
+
+def fetch_account(token, name):
+    """定向拉取指定公众号的历史文章（天然精准，无需过滤）。"""
+    try:
+        r = http_json(f"{HOST}/api/v2/articles/history", method="POST",
+                      params={"access_token": token}, data={"id": name})
+    except Exception as e:
+        print(f"[warn] 公众号[{name}] 拉取失败：{str(e)[:80]}")
+        return [], None
+    items = (r.get("data") or {}).get("items") or []
+    for it in items:
+        it["_mp"] = name          # 标记来源公众号
+        it["_channel"] = "公众号"  # 当作独立渠道，复用热榜的宽松过滤
+        if it.get("source_url"):
+            it["content_url"] = it["source_url"]
+        # 公众号文章不叫 read_num，统一给个默认值
+        it.setdefault("read_num", 0)
+        it.setdefault("nickname", name)
+    return items, r.get("balance")
 
 # 热榜渠道（cimi-data get_hot_ranking 接口）
 HOT_CHANNELS = {1: "微博", 2: "知乎", 3: "百度", 4: "抖音", 5: "头条"}
@@ -221,7 +268,15 @@ HOT_BLACK = ["遇难","身亡","死亡","去世","逝世","讣告","悼念","报
   "奢侈品","爱马仕","LV","香奈儿","名牌包","拾便袋",
   "维权","起诉","被告","索赔","消费者协会",
   # 房产/情感
-  "房价","二手房","楼盘","房贷","彩礼","婆媳","征婚","相亲","脱单"]
+  "房价","二手房","楼盘","房贷","彩礼","婆媳","征婚","相亲","脱单",
+  # 硬件爆料/拉踩/段子（对软件技巧主播无用）
+  "爆料","曝光","预测","前瞻","概念图","渲染图","上手","开箱","拆机",
+  "起售价","预订价","预约量","代购","黄牛","涨价","维修费","工艺倒退",
+  "A18","A19","骁龙","天玑","跑分","安兔兔","DXO",
+  # 游戏/抽卡/娱乐向
+  "攻略组","抽卡","氪金","副本","开黑","段位","皮肤","英雄","赛季",
+  # 无关公众人物/八卦
+  "宋祖德","网红","博主","主播","直播带货"]
 # 软件/工具/技巧相关提升词（命中任一即纳入）——核心保留白名单
 HOT_GOOD = [
   # 系统与平台
@@ -248,8 +303,18 @@ HOT_GOOD = [
   "免费","省钱","优惠","折扣","降价","价格","会员","订阅","平替","性价比","薅羊毛"]
 
 def keep_hot(item):
-    """热榜条目过滤：先剔除硬噪声，再要求命中软件/工具/技巧关键词。"""
+    """热榜/公众号条目过滤：先剔除硬噪声，再要求命中软件/工具/技巧关键词。"""
     t = item.get("title", "")
+    # 定向公众号来的：来源本身够精准，只要不中黑名单就放行
+    if item.get("_mp"):
+        if any(k in t for k in BLACK_KW):
+            return False
+        # 公众号内也有广告/荐物/活动类，过滤掉
+        NOISE = ["最后一波", "限时优惠", "复制口令", "文中链接", "广告", "抽奖",
+                 "开奖", "签售", "招募", "招聘", "投稿", "征稿", "合作"]
+        if any(k in t for k in NOISE):
+            return False
+        return True
     # 1. 黑名单优先（医疗/汽车/娱乐/体育/奢侈品一律不要）
     if any(k in t for k in BLACK_KW) or any(k in t for k in HOT_BLACK):
         return False
@@ -267,25 +332,43 @@ def keep_hot(item):
     return True
 
 def hot_score(item):
-    """热榜条目排序分：相关性 + 热度。强软件/数码/技巧话题加权。"""
+    """排序分：定向公众号优先，其次强软件/数码/技巧关键词，硬件爆料降权。"""
     t = item.get("title", "")
     s = 0
+    # 定向公众号内容天然精准，基础分高
+    if item.get("_mp"):
+        s += 6
     for kw in HOT_GOOD:
         if kw in t: s += 2
     # 强相关词（主播核心内容）额外加权，优先上日报
+    # 注：硬件品牌不算强词（避免 iPhone/手机爆料刷屏），软件/工具/技巧才算
     STRONG = ["Windows","Win11","macOS","iOS","安卓","Android","鸿蒙","HarmonyOS",
-              "软件","App","插件","扩展","开源","神器","工具","教程","技巧","攻略",
+              "软件","App","插件","扩展","开源","神器","工具箱","教程","技巧","攻略",
               "AI","GPT","ChatGPT","DeepSeek","Copilot","提示词",
-              "快捷键","设置","隐私","备份","自动化","效率","批量","一键",
-              "手机","iPhone","华为","小米","电脑","笔记本","免费","省钱"]
+              "快捷键","设置","隐私","备份","自动化","效率","批量","一键","隐藏功能",
+              "怎么用","如何","免费","省钱","权限"]
     for kw in STRONG:
         if kw in t: s += 3
+    # 硬件爆料类降权（纯爆料/降价/预约/发布会不会教你用东西）
+    HYPE = ["爆料","曝光","上手","开箱","预订","预约","起售价","售价","元起",
+            "史上最低","降价","涨价","代购","黄牛","抢购","售罄",
+            "上手体验","外观","配色","手感","续航","充电速度","跑分","排行"]
+    for kw in HYPE:
+        if kw in t: s -= 4
     return s
 
 def dedupe(items):
-    """去重：微信源每个公众号最多 2 条；热榜源不限单平台数（避免单平台霸屏，但不卡太死）。"""
+    """去重：定向公众号每个最多 3 条；微信爆款每个号最多 2 条；热榜每平台最多 4 条。"""
     seen, hot_seen, out = {}, {}, []
     for it in items:
+        if it.get("_mp"):
+            # 定向公众号：每个号最多 3 条
+            key = "mp:" + it["_mp"]
+            if seen.get(key, 0) >= 3:
+                continue
+            seen[key] = seen.get(key, 0) + 1
+            out.append(it)
+            continue
         if it.get("_channel"):
             # 热榜：每个平台最多 4 条
             ch = it["_channel"]
@@ -325,7 +408,7 @@ DIR_KW = {
 }
 
 def summarize(items):
-    """用 DeepSeek 将条目改写为生活优化 10 条日报（四方向，每条 6 字段）。
+    """用 DeepSeek 将条目改写为软件/工具日报（四方向，每条 6 字段）。
 
     输出字段：title(标题)/direction(方向)/pain(核心痛点)/angle(文章切入点)/keywords(关键词)/review(深度评价)。
     保留原始 it，便于渲染时取来源/链接。
@@ -334,7 +417,7 @@ def summarize(items):
         return [{"title": it["title"], "direction": "技巧攻略", "pain": "", "angle": "",
                  "keywords": [], "review": ""} for it in items]
     lines = "\n".join(
-        f"{i+1}. [{it.get('_channel') or it.get('nickname','')}] {it['title']}"
+        f"{i+1}. [{it.get('_mp') or it.get('_channel') or it.get('nickname','')}] {it['title']}"
         for i, it in enumerate(items))
     prompt = (
         "你是一名专注\"软件/工具/技巧\"分享的内容主编，读者是想学新东西、找好用的工具的人。"
@@ -343,8 +426,9 @@ def summarize(items):
         "2实用工具（效率工具/自动化/脚本/快捷键/AI工具/NAS/备份/一键操作）"
         "3技巧攻略（使用方法/设置/隐藏功能/教程/攻略/冷知识/学习技巧）"
         "4隐私安全（权限管理/数据安全/防骗防诈/广告弹窗/账号密码/卸载流氓软件）。"
-        "❗重要：只写软件/工具/数码/技巧类内容。如果某条新闻跟这些完全无关（医疗健康、汽车、"
-        "奢侈品、情感、房产、体育、娱乐八卦），直接跳过不写，宁可少几条也不要凑数。\n"
+        "❗重要：严格筛选，宁少勿滥。只写软件/工具/数码/技巧类内容。"
+        "如果某条新闻跟这些完全无关（医疗健康、汽车、奢侈品、情感、房产、体育、娱乐八卦），"
+        "直接跳过不写。最终输出 3-10 条都行，质量比数量重要。\n"
         "对每条输出 6 个字段：\n"
         "1)title：标题（15-25字，带钩子，不夸大）；\n"
         "2)direction：从 新软件/实用工具/技巧攻略/隐私安全 中选最贴切的一个；\n"
@@ -365,7 +449,7 @@ def summarize(items):
         "禁止夸大（不用震惊/必看/史上最全/彻底/绝对），禁止编造数据、案例、专家名、机构名。\n"
         "严格按 JSON 数组输出，不要其他文字："
         '[{"title":"...","direction":"实用工具","pain":"...","angle":"...","keywords":["..."],"review":"..."}]\n'
-        "注意：四个方向尽量均衡，优先覆盖 新软件/实用工具/技巧攻略/隐私安全 各至少 2 条。\n\n"
+        "注意：四个方向尽量均衡，但以质量为先，不必强凑。\n\n"
         f"候选内容：\n{lines}")
     r = http_json("https://api.deepseek.com/chat/completions", method="POST",
                   headers={"Authorization": f"Bearer {DS_KEY}"},
@@ -385,10 +469,10 @@ def summarize(items):
         return []
 
 def balance_by_direction(items, notes):
-    """按 3+3+2+2 配额挑出最终 10 条（notes 已带 direction）。
+    """按方向配额挑最终条目（质量优先，3-10 条都行）。
 
-    策略：先按方向归类，各方向优先取 life/hot 分高的；不足配额从其他方向按分补，"
-    最终保证 10 条。
+    策略：先按方向归类，各方向优先取 life/hot 分高的；从其他方向按分补，
+    但**最多补到 10 条，最少 3 条即可**。AI 已经筛过的条目不额外凑数。
     """
     scored = list(zip(items, notes))
     def score(pair):
@@ -402,16 +486,19 @@ def balance_by_direction(items, notes):
     for d in buckets:
         buckets[d].sort(key=score, reverse=True)
     picked, used = [], set()
+    # 质量门槛：候选不少时按配额取，候选少时全要
+    total = len(scored)
+    quota = DIR_QUOTA if total >= 8 else {d: 99 for d in DIRECTIONS}
     for d in DIRECTIONS:
-        for pair in buckets[d][:DIR_QUOTA[d]]:
+        for pair in buckets[d][:quota[d]]:
             picked.append(pair); used.add(id(pair))
-    # 补足到 10 条
+    # 补足到 MIN_ITEMS（但不超过 MAX_ITEMS，也不超过 AI 实际给出的条数）
     rest = [p for p in sorted(scored, key=score, reverse=True) if id(p) not in used]
     for pair in rest:
-        if len(picked) >= 10:
+        if len(picked) >= MAX_ITEMS:
             break
         picked.append(pair)
-    picked = picked[:10]
+    picked = picked[:MAX_ITEMS]
     # 交错排序：让四个方向轮流出现，首页不会一屏全是同一方向
     by_d = {d: [p for p in picked if p[1].get("direction") == d] for d in DIRECTIONS}
     interleaved, idx = [], 0
@@ -429,7 +516,7 @@ def fmt_read(n):
     return str(n)
 
 def render_html(items, notes, date_str, balance):
-    """详情页：展示 10 条日报的完整 6 字段（方向/来源/痛点/切入点/关键词/评价）。"""
+    """详情页：展示日报的完整 6 字段（方向/来源/怎么回事/怎么办/关键词/我的观点）。"""
     today_cn = datetime.date.today().strftime("%Y年%m月%d日")
     rows = []
     for i, (it, note) in enumerate(zip(items, notes), 1):
@@ -455,8 +542,8 @@ def render_html(items, notes, date_str, balance):
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>今日软件工具 {date_str} - 新软件·实用工具·技巧攻略·隐私安全 10 条</title>
-<meta name="description" content="每天 10 条跟你有关系的软件工具信息：新软件、实用工具、技巧攻略、隐私安全，每条附痛点、怎么用与我的观点。">
+<title>今日软件工具 {date_str} - 新软件·实用工具·技巧攻略·隐私安全</title>
+<meta name="description" content="每天精选跟你有关系的软件工具信息：新软件、实用工具、技巧攻略、隐私安全，每条附怎么回事、怎么用与我的观点。">
 <style>
   body{{margin:0;background:#0f172a;color:#e2e8f0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}}
   .wrap{{max-width:760px;margin:0 auto;padding:20px 16px 40px}}
@@ -487,7 +574,7 @@ def render_html(items, notes, date_str, balance):
 <body>
 <div class="wrap">
   <header>
-    <h1>📡 KTcove 今日生活科技</h1>
+    <h1>📡 KTcove 今日软件工具</h1>
     <p>{today_cn} · 新软件 · 实用工具 · 技巧攻略 · 隐私安全 ，共 {len(items)} 条</p>
   </header>
   <div class="list">{''.join(rows)}
@@ -505,7 +592,7 @@ GRID_START = "<!--DAILY_LIST_START-->"
 GRID_END = "<!--DAILY_LIST_END-->"
 
 def update_index(daily_path, today_items, notes):
-    """更新首页 #daily 板块为「10 条清单」布局（标题 + 一句点评）。
+    """更新首页 #daily 板块为「清单」布局（标题 + 一句点评）。
 
     用锚点注释精确替换列表区，避免旧版靠 find('</div>') 误伤卡片内部 div 导致的 HTML 破坏。
     """
@@ -692,28 +779,34 @@ def update_sitemap(daily_url):
     with open(sp, "w", encoding="utf-8") as f: f.write(src)
 
 def collect_items(token):
-    """多源采集：微信爆款（keji+caijing）+ 热榜（微博/知乎/百度/抖音/头条）。
+    """多源采集：微信爆款（科技类多分类）+ 热榜（微博/知乎/百度/抖音/头条）。
 
     返回 (all_items, balance)。任一源失败不影响其它源。
     """
     all_items, balance = [], None
-    # 1) 微信爆款（科技类，不足时补财经）
-    try:
-        wx_items, balance = fetch_hot(token)
-        all_items.extend(wx_items)
-        print(f"[info] 微信科技类 {len(wx_items)} 条")
-        if len(wx_items) < 20:
-            global CATEGORY
-            old = CATEGORY
-            CATEGORY = "caijing"
-            try:
-                cj_items, balance = fetch_hot(token)
-                all_items.extend(cj_items)
-                print(f"[info] 微信财经类补充 {len(cj_items)} 条")
-            finally:
-                CATEGORY = old
-    except Exception as e:
-        print(f"[warn] 微信爆款拉取失败：{e}")
+
+    # 0) 定向公众号（最精准的来源，优先）
+    for name in TARGET_ACCOUNTS:
+        acc_items, bal = fetch_account(token, name)
+        if bal is not None:
+            balance = bal
+        all_items.extend(acc_items)
+        print(f"[info] 公众号[{name}] {len(acc_items)} 条")
+
+    # 1) 微信爆款：多分类拉取，补足软件/工具类内容
+    #    keji=科技，caijing=财经，it=互联网数码（若接口支持）
+    global CATEGORY
+    _old_cat = CATEGORY
+    for cat in WX_CATEGORIES:
+        try:
+            CATEGORY = cat
+            wx_items, balance = fetch_hot(token)
+            all_items.extend(wx_items)
+            print(f"[info] 微信[{cat}] {len(wx_items)} 条")
+        except Exception as e:
+            print(f"[warn] 微信[{cat}] 拉取失败：{e}")
+        finally:
+            CATEGORY = _old_cat
     # 2) 热榜五渠道
     for cid in HOT_CHANNELS:
         rk = fetch_hot_ranking(token, cid)
@@ -736,8 +829,9 @@ def main():
     items = wx_dated + hot_items
     print(f"[info] 当日微信 {len(wx_dated)} 条 + 热榜 {len(hot_items)} 条")
     items = [it for it in items if keep(it)]
-    if len(items) < 5:
-        print(f"[warn] 生活化过滤后仅 {len(items)} 条，放宽为按热度取（剔除黑名单词后）") 
+    if len(items) < MIN_ITEMS:
+        print(f"[warn] 过滤后仅 {len(items)} 条（低于最少 {MIN_ITEMS} 条）")
+        print(f"[warn] 放宽为按热度取（仅剔除硬黑名单词）")
         items = [it for it in all_items if not any(k in it.get("title", "") for k in BLACK_KW)]
     items = dedupe(items)
     items.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
@@ -766,8 +860,8 @@ def main():
             pool.append(it); picked_ids.add(id(it))
     pool.sort(key=lambda x: ((hot_score(x) if x.get("_channel") else life_score(x)), x.get("read_num", 0)), reverse=True)
     items = pool[:18]
-    if len(items) < 5:
-        print(f"[warn] 有效文章仅 {len(items)} 条，检查过滤规则")
+    if len(items) < MIN_ITEMS:
+        print(f"[warn] 候选不足 {MIN_ITEMS} 条，本次不生成（宁缺勿滥）")
     if not items:
         print("[err] 本次采集/过滤后无有效条目，跳过本次生成（常见原因：cimi-data 余额不足 6020 或接口异常）。")
         print("[err] 未生成任何文件，不提交，等待下次运行。")
@@ -777,6 +871,11 @@ def main():
         print("[warn] DeepSeek 未返回有效内容，使用占位（保留标题）")
         notes = [{"title": it["title"], "direction": "技巧攻略", "pain": "", "angle": "",
                   "keywords": [], "review": ""} for it in items]
+    # AI 可能筛掉不相关条目：只要还有至少 MIN_ITEMS 条就照常发布（质量优先）
+    if len(notes) < MIN_ITEMS:
+        print(f"[warn] AI 筛选后仅 {len(notes)} 条（少于 {MIN_ITEMS} 条），本次跳过生成，等下次运行")
+        print("[warn] 这说明今天适合的软件/工具类内容确实太少。")
+        return
     # DeepSeek 会自行精选/改写，条数可能少于输入：按标题对齐回原始 it（保链接/来源）
     used = set()
     aligned = []
@@ -800,7 +899,7 @@ def main():
         aligned = list(zip(items, notes))
     items = [p[0] for p in aligned]
     notes = [p[1] for p in aligned]
-    # 按 3+3+2+2 配额挑出最终 10 条
+    # 按方向配额挑出最终条目（3-10 条）
     items, notes = balance_by_direction(items, notes)
     print(f"[info] 最终 {len(items)} 条，方向分布：" +
           ", ".join(f"{d}{sum(1 for n in notes if n.get('direction')==d)}" for d in DIRECTIONS))
