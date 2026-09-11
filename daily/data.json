@@ -782,5 +782,179 @@
    "url": "https://www.ktcove.com/daily/2026-09-10.html",
    "article_url": "https://www.baidu.com/s?wd=%E6%89%8B%E6%9C%BA%E6%8A%98%E7%97%95+%E6%9F%94%E6%80%A7%E7%94%B5%E5%AD%90"
   }
+ ],
+ "2026-09-11": [
+  {
+   "date": "2026-09-11",
+   "title": "新能源车降价、燃油车暴跌，现在买车怎么选不亏",
+   "nickname": "知乎",
+   "direction": "省钱",
+   "pain": "车市价格波动剧烈，消费者既怕买贵了又怕买错了，持币观望却越看越迷茫。",
+   "angle": "结合8月零售数据，拆解新能源与燃油车各自的持有成本、保值率和政策变量，帮读者按用车场景算账而非跟风。重点讲清楚什么情况下现在出手合理，什么情况下再等等更划算。",
+   "keywords": [
+    "买车",
+    "新能源",
+    "燃油车",
+    "持有成本",
+    "保值率"
+   ],
+   "review": "不预测涨跌，只帮读者理清自己的账。车市变量太多，任何建议都有时效性，适合当决策框架而非直接答案。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.zhihu.com/question/2080949653168550211"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "修车修到怀疑人生？避开汽修套路先做这三件事",
+   "nickname": "百度",
+   "direction": "避坑",
+   "pain": "车主面对维修报价不透明、配件真假难辨，修一次车像赌一次运气。",
+   "angle": "从车主“修不起也信不过”的普遍困境出发，讲清楚维修前如何比价、维修中如何留证、维修后如何维权。用流程化的方式降低信息不对称，不点名任何具体商家。",
+   "keywords": [
+    "汽修",
+    "消费陷阱",
+    "维权",
+    "配件",
+    "报价透明"
+   ],
+   "review": "把维权拆成可执行的步骤，比单纯吐槽行业乱象有用。但各地维修市场差异大，读者仍需结合本地情况判断。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.baidu.com/s?wd=%E6%89%8B%E6%9C%BA%E5%8E%82%E5%95%86%E4%B8%8D%E8%83%BD%E6%8A%8A%E7%94%A8%E6%88%B7%E9%80%BC%E5%90%91%E9%99%A9%E5%A2%83"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "AI大佬说AGI可能已实现，普通人该关注什么",
+   "nickname": "头条",
+   "direction": "提效",
+   "pain": "AGI话题被反复炒作，普通人既焦虑被替代，又不知道眼下能用AI做什么实事。",
+   "angle": "不纠结AGI定义之争，把视角拉回到当下：哪些AI工具已经能稳定提升日常工作效率，哪些场景还不靠谱。按写作、整理、检索、自动化四类给出实际使用建议和边界提醒。",
+   "keywords": [
+    "AI工具",
+    "AGI",
+    "工作效率",
+    "自动化"
+   ],
+   "review": "绕开概念口水战，聚焦“今天能用的”。但AI工具迭代快，文中推荐可能很快过时，读者需保持自己的判断。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.toutiao.com/trending/7684231135148117510/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%2213%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227684231135148117510%22%2C%22hot_board_impr_id%22%3A%22202609112140236915AA9EEA92197F351E%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22AI%E5%A4%A7%E4%BD%AC%E9%9B%86%E4%BD%93%E6%9D%BE%E5%8F%A3%EF%BC%9AAGI%E5%8F%AF%E8%83%BD%E5%B7%B2%E7%BB%8F%E5%AE%9E%E7%8E%B0%E4%BA%86%22%7D&rank=&style_id=40132&topic_id=7684231135148117510"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "手机厂商别把用户逼向险境，这些权限该关了",
+   "nickname": "抖音",
+   "direction": "护隐私",
+   "pain": "手机预装应用和系统功能频繁索取权限，用户不点同意就用不了，点了又担心隐私泄露。",
+   "angle": "从近期媒体讨论的手机厂商责任切入，梳理普通用户能主动关闭的高风险权限和设置项，比如后台定位、剪贴板读取、个性化广告追踪。不空谈监管，给一份可照着点的操作清单。",
+   "keywords": [
+    "手机权限",
+    "隐私设置",
+    "预装应用",
+    "数据安全"
+   ],
+   "review": "把公共议题落回到每个人手机里的设置页面，实用性强。但厂商系统差异大，部分路径需读者自行对照，不能指望一篇通吃。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.douyin.com/hot/2644556"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "iPhone 17 Pro降到史低，但先算完这笔账再下单",
+   "nickname": "头条",
+   "direction": "省钱",
+   "pain": "看到“史上最低价”就冲动下单，忽略了旧机折抵、套餐绑定和配件隐性支出。",
+   "angle": "以iPhone 17 Pro降价为引子，帮读者算清楚换机的真实总成本：旧机残值、运营商合约、必买配件、AppleCare等。对比“现在换”和“再用一年”两种方案的实际差额。",
+   "keywords": [
+    "iPhone",
+    "换机成本",
+    "隐性支出",
+    "消费决策"
+   ],
+   "review": "给降价热泼一盆温水，提醒读者关注总持有成本而非标价。不过每个人旧机状况不同，算账结果因人而异。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.toutiao.com/trending/7684222280172060698/?category_name=topic_innerflow&event_type=hot_board&log_pb=%7B%22category_name%22%3A%22topic_innerflow%22%2C%22cluster_type%22%3A%226%22%2C%22enter_from%22%3A%22click_category%22%2C%22entrance_hotspot%22%3A%22outside%22%2C%22event_type%22%3A%22hot_board%22%2C%22hot_board_cluster_id%22%3A%227684222280172060698%22%2C%22hot_board_impr_id%22%3A%22202609112140236915AA9EEA92197F351E%22%2C%22jump_page%22%3A%22hot_board_page%22%2C%22location%22%3A%22news_hot_card%22%2C%22page_location%22%3A%22hot_board_page%22%2C%22source%22%3A%22trending_tab%22%2C%22style_id%22%3A%2240132%22%2C%22title%22%3A%22%E5%AA%92%E4%BD%93%EF%BC%9A%E6%89%8B%E6%9C%BA%E5%8E%82%E5%95%86%E4%B8%8D%E8%83%BD%E6%8A%8A%E7%94%A8%E6%88%B7%E9%80%BC%E5%90%91%E9%99%A9%E5%A2%83%22%7D&rank=&style_id=40132&topic_id=7684222280172060698"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "爱马仕1.1万的宠物拾便袋包，谁在买单",
+   "nickname": "微博",
+   "direction": "避坑",
+   "pain": "奢侈品不断推出高价非核心品类，消费者容易在品牌光环下做出非理性消费。",
+   "angle": "以爱马仕宠物收纳包为切入点，讨论奢侈品牌延伸产品的定价逻辑和消费心理，帮读者分辨“真需求”和“品牌税”。不嘲讽消费者，只提供冷静的决策视角。",
+   "keywords": [
+    "奢侈品",
+    "智商税",
+    "消费心理",
+    "品牌溢价"
+   ],
+   "review": "不是批判买或不买，而是让人看清溢价从哪来。消费选择本无对错，但知道自己在为什么付钱很重要。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://s.weibo.com/weibo?q=%23iPhoneDuo%E5%9B%BE%E6%A0%87%E4%B8%89%E5%90%88%E4%B8%80%E5%BC%95%E4%BA%89%E8%AE%AE%23&t=31&band_rank=23&Refer=top"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "开学考12分却排前6%，大学考试到底在考什么",
+   "nickname": "微博",
+   "direction": "提效",
+   "pain": "新生发现高考高分和大学考试之间严重脱节，不知道该怎么调整学习方式。",
+   "angle": "从西电开学考的热议切入，分析大学考试与高中考试在考察目标上的本质差异，给出适应大学学习节奏的具体方法：如何抓重点、如何利用往年题、如何分配精力。",
+   "keywords": [
+    "大学学习",
+    "考试方法",
+    "学习效率",
+    "新生适应"
+   ],
+   "review": "把一场考试的讨论转化为学习方法论，对新生有实际参考价值。但不同学校考试风格差异大，方法需灵活调整。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://s.weibo.com/weibo?q=%23iPhone17Pro%E5%8F%B2%E4%B8%8A%E6%9C%80%E4%BD%8E%E4%BB%B7%23&t=31&band_rank=21&Refer=top"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "Apple Watch S12上手：哪些升级值得你掏钱",
+   "nickname": "微博",
+   "direction": "省钱",
+   "pain": "智能手表年年更新，老用户不确定新功能是否值得升级，新用户面对众多型号不知从何选起。",
+   "angle": "从实际使用场景出发，对比S12与前代在健康监测、续航、交互上的差异，明确哪些人适合升级、哪些人继续用旧款就好。不做参数罗列，只讲日常体验变化。",
+   "keywords": [
+    "Apple Watch",
+    "智能手表",
+    "升级决策",
+    "消费降级"
+   ],
+   "review": "帮读者按需求而非按新品节奏做决定。但手表体验主观性强，建议结合线下试戴再判断。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://s.weibo.com/weibo?q=Apple%20Watch%20S12%E4%B8%8A%E6%89%8B%E4%BD%93%E9%AA%8C&t=31&band_rank=19&Refer=top"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "台湾医生造谣迪士尼被告，网络发言的法律边界在哪",
+   "nickname": "微博",
+   "direction": "避坑",
+   "pain": "普通人在网上随手发的内容，可能在不经意间触碰法律红线而不自知。",
+   "angle": "借迪士尼法务维权事件，梳理网络发言中容易踩线的几种情形：造谣、诽谤、侵权使用商标形象等。用通俗语言讲清楚法律后果和自我保护方式，不针对具体当事人。",
+   "keywords": [
+    "网络发言",
+    "法律风险",
+    "维权",
+    "知识产权"
+   ],
+   "review": "用热点事件普及法律常识，提醒读者发言前多想一步。但各地法律适用有差异，具体问题仍需咨询专业人士。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://s.weibo.com/weibo?q=%E5%8F%B0%E6%B9%BE%E5%8C%BB%E7%94%9F%E9%80%A0%E8%B0%A3%E8%BF%AA%E5%A3%AB%E5%B0%BC%E6%83%B9%E4%B8%8A%E5%9C%B0%E8%A1%A8%E6%9C%80%E5%BC%BA%E6%B3%95%E5%8A%A1&t=31&band_rank=17&Refer=top"
+  },
+  {
+   "date": "2026-09-11",
+   "title": "膝盖报废元凶在屁股？久坐族该知道的链条反应",
+   "nickname": "百度",
+   "direction": "提效",
+   "pain": "久坐人群膝盖不适却只盯着膝盖治，忽略了臀部肌肉无力带来的连锁影响。",
+   "angle": "从“膝盖问题可能出在屁股”这一运动康复视角出发，解释臀肌无力如何影响膝关节受力，给出几个日常可做的激活和强化动作。不替代医疗诊断，强调症状持续应就医。",
+   "keywords": [
+    "久坐",
+    "膝盖健康",
+    "运动康复",
+    "臀肌"
+   ],
+   "review": "提供了一个被忽视的身体关联视角，动作也简单可操作。但个体差异大，有伤病史的人应先咨询医生。",
+   "url": "https://www.ktcove.com/daily/2026-09-11.html",
+   "article_url": "https://www.baidu.com/s?wd=%E7%88%B1%E9%A9%AC%E4%BB%95%E4%B8%8A%E6%96%B01.1%E4%B8%87%E5%85%83%E5%AE%A0%E7%89%A9%E6%8B%BE%E4%BE%BF%E8%A2%8B%E6%94%B6%E7%BA%B3%E5%8C%85"
+  }
  ]
 }
