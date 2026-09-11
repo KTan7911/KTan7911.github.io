@@ -448,14 +448,44 @@ function initComposer(){
    顶部按钮 / Tab
    ========================================================== */
 function initChrome(){
-  $('#openHole').addEventListener('click', () => openHole());
-  $('#closeHole').addEventListener('click', () => $('#holepage').classList.add('hidden'));
+  $('#openHole').addEventListener('click', () => switchTab('hole'));
+  $('#closeHole').addEventListener('click', () => { $('#holepage').classList.add('hidden'); switchTab('write'); });
 
-  $('#openProfile').addEventListener('click', () => PROFILE.open());
-  $('#closeProfile').addEventListener('click', () => PROFILE.close());
+  $('#openProfile').addEventListener('click', () => switchTab('me'));
+  $('#closeProfile').addEventListener('click', () => { $('#profilepage').classList.add('hidden'); switchTab('write'); });
   $('#pfSave').addEventListener('click', () => PROFILE.save());
   $('#pwSubmit').addEventListener('click', () => PROFILE.changePassword());
   $('#logoutBtn').addEventListener('click', logout);
+
+  // 底部导航
+  $$('#tabbar button').forEach(b => {
+    b.addEventListener('click', () => switchTab(b.dataset.t));
+  });
+
+  $('#closeTalk').addEventListener('click', () => switchTab('write'));
+}
+
+function openTalk(){ $('#talkpage').classList.remove('hidden'); }
+
+/* ---------- 页面切换 ---------- */
+function switchTab(t){
+  $$('#tabbar button').forEach(x => x.classList.toggle('on', x.dataset.t === t));
+  $('#holepage').classList.add('hidden');
+  $('#profilepage').classList.add('hidden');
+  $('#talkpage').classList.add('hidden');
+
+  if (t === 'write') {
+    $('#writeArea').style.display = 'flex';
+  } else if (t === 'hole') {
+    $('#writeArea').style.display = 'none';
+    openHole();
+  } else if (t === 'me') {
+    $('#writeArea').style.display = 'none';
+    PROFILE.open();
+  } else if (t === 'ask') {
+    $('#writeArea').style.display = 'none';
+    openTalk();
+  }
 }
 
 /* ==========================================================

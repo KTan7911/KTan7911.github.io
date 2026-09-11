@@ -157,7 +157,7 @@ button,input,textarea{font-family:inherit;}
 
 /* ================= 输入区 ================= */
 .composer{flex-shrink:0;background:rgba(253,250,246,.96);backdrop-filter:blur(20px);
-  border-top:1px solid var(--line);padding:10px 14px calc(10px + var(--safe-b));z-index:20;}
+  border-top:1px solid var(--line);padding:10px 14px calc(62px + var(--safe-b));z-index:20;}
 .moodstrip{display:flex;gap:7px;margin-bottom:9px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px;}
 .moodstrip::-webkit-scrollbar{display:none;}
 .moodstrip button{padding:7px 15px;border-radius:99px;border:1.5px solid transparent;
@@ -203,13 +203,18 @@ button,input,textarea{font-family:inherit;}
   box-shadow:0 4px 14px rgba(255,107,129,.34);}
 .send:disabled{opacity:.4;box-shadow:none;}
 
-/* ================= 悬浮 Tab ================= */
+/* ================= 底部导航 ================= */
 .tabs{position:absolute;bottom:calc(10px + var(--safe-b));left:50%;transform:translateX(-50%);
-  display:flex;gap:4px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);padding:5px;
-  border-radius:99px;box-shadow:0 4px 20px rgba(214,180,160,.24);z-index:30;}
-.tabs button{padding:8px 15px;border-radius:99px;border:none;background:transparent;
-  font-size:12px;font-weight:650;color:var(--ink3);cursor:pointer;transition:all .22s;white-space:nowrap;}
+  display:flex;gap:3px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);padding:6px;
+  border-radius:99px;box-shadow:0 6px 26px rgba(214,180,160,.3);z-index:30;}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:7px 15px;border-radius:99px;border:none;background:transparent;
+  color:var(--ink3);cursor:pointer;transition:all .22s;}
+.tabs button .tic{font-size:17px;line-height:1;filter:grayscale(.55) opacity(.62);transition:all .22s;}
+.tabs button .tlb{font-size:9.5px;font-weight:700;letter-spacing:.2px;}
 .tabs button.on{background:linear-gradient(135deg,var(--coral),var(--peach2));color:#fff;}
+.tabs button.on .tic{filter:none;transform:scale(1.1);}
+.tabs button:active{transform:scale(.94);}
 
 /* ================= Toast ================= */
 .toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);
