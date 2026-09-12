@@ -32,17 +32,17 @@
 <div class="wrap">
   <header>
     <h1>📚 历史日报归档</h1>
-    <p>共 8 期 · 搜索或点热词，快速找到往期内容</p>
+    <p>共 9 期 · 搜索或点热词，快速找到往期内容</p>
   </header>
   <input class="searchbox" id="q" type="search" placeholder="🔍 搜索历史日报，如：电池、免费、隐私…">
-  <div class="chips" id="chips"><button class="chip" data-kw="手机">手机</button><button class="chip" data-kw="学习">学习</button><button class="chip" data-kw="提醒">提醒</button><button class="chip" data-kw="设置">设置</button><button class="chip" data-kw="隐私">隐私</button></div>
+  <div class="chips" id="chips"><button class="chip" data-kw="开源">开源</button><button class="chip" data-kw="软件">软件</button><button class="chip" data-kw="神器">神器</button><button class="chip" data-kw="广告">广告</button><button class="chip" data-kw="手机">手机</button></div>
   <p class="hint" id="hint">▼ 按日期浏览</p>
-  <div id="days"><a class="day" href="2026-09-11.html">2026-09-11 日报 →</a><a class="day" href="2026-09-10.html">2026-09-10 日报 →</a><a class="day" href="2026-08-24.html">2026-08-24 日报 →</a><a class="day" href="2026-08-23.html">2026-08-23 日报 →</a><a class="day" href="2026-08-22.html">2026-08-22 日报 →</a><a class="day" href="2026-08-21.html">2026-08-21 日报 →</a><a class="day" href="2026-08-20.html">2026-08-20 日报 →</a><a class="day" href="2026-08-19.html">2026-08-19 日报 →</a></div>
+  <div id="days"><a class="day" href="2026-09-12.html">2026-09-12 日报 →</a><a class="day" href="2026-09-11.html">2026-09-11 日报 →</a><a class="day" href="2026-09-10.html">2026-09-10 日报 →</a><a class="day" href="2026-08-24.html">2026-08-24 日报 →</a><a class="day" href="2026-08-23.html">2026-08-23 日报 →</a><a class="day" href="2026-08-22.html">2026-08-22 日报 →</a><a class="day" href="2026-08-21.html">2026-08-21 日报 →</a><a class="day" href="2026-08-20.html">2026-08-20 日报 →</a><a class="day" href="2026-08-19.html">2026-08-19 日报 →</a></div>
   <div id="results" style="display:none"></div>
   <footer><a class="back" href="https://www.ktcove.com/">← 返回首页</a></footer>
 </div>
 <script>
-const DIR_COLOR = {"省钱":"#eab308","避坑":"#ef4444","提效":"#22c55e","护隐私":"#3b82f6"};
+const DIR_COLOR = {"新软件":"#eab308","实用工具":"#22c55e","技巧攻略":"#3b82f6","隐私安全":"#ef4444"};
 let ALL = [];
 fetch('data.json').then(r => r.json()).then(store => {
   for (const [d, arr] of Object.entries(store)) ALL = ALL.concat(arr);
